@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alma Salud - Registro de Pacientes</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -325,6 +326,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
       <div class="toolbar-actions">
         <button class="btn-outline" onclick="reiniciarFiltros()">&#8635; Reiniciar</button>
+        <button class="btn-outline" id="btn-pdf" onclick="exportarInformePDF()">&#128196; Informe PDF</button>
         <button class="btn-gold" onclick="exportCSV()">&#8595; CSV</button>
       </div>
     </div>
@@ -472,6 +474,144 @@ window.exportCSV=function(){
   a.download='AlmaSalud_'+(eventoActual||'registro').replace(/[^a-zA-Z0-9]/g,'_').substring(0,30)+'.csv';
   document.body.appendChild(a);a.click();
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+};
+
+// ── Exportar Informe PDF (branding Alma Salud) ──
+function fmtFecha(f){
+  if(!f)return '--';
+  try{return new Date(f+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});}catch(e){return f;}
+}
+
+window.exportarInformePDF=function(){
+  const lista=filtrar();
+  if(!lista.length){alert('No hay registros para exportar.');return;}
+  if(typeof html2pdf==='undefined'){alert('No se pudo cargar el generador de PDF. Verifica tu conexion a internet e intenta de nuevo.');return;}
+
+  const btn=document.getElementById('btn-pdf');
+  const btnTxtOrig=btn?btn.textContent:'';
+  if(btn){btn.textContent='Generando...';btn.disabled=true;}
+
+  const fechas=[...new Set(lista.map(r=>r.fecha).filter(Boolean))].sort();
+  const fechaTxt=fechas.length?(fechas.length===1?fmtFecha(fechas[0]):fmtFecha(fechas[0])+' al '+fmtFecha(fechas[fechas.length-1])):'--';
+  const sedes=[...new Set(lista.map(r=>r.cancha).filter(Boolean))];
+  const profesionales=[...new Set(lista.map(r=>r.profesional).filter(Boolean))];
+  const totalDer=lista.filter(r=>r.derivacion==='SI').length;
+  const totalMen=lista.filter(r=>parseInt(r.edad||'99')<18).length;
+
+  const cardsHTML=lista.map((r,i)=>{
+    const der=r.derivacion==='SI';
+    return `
+    <div class="ip-patient">
+      <div class="ip-patient-top">
+        <div class="ip-patient-name">${i+1}. ${esc(r.nombre)}</div>
+        <div class="ip-patient-meta">${r.dni?('DNI '+esc(r.dni)):''}${r.edad?(' &middot; '+esc(r.edad)+' anos'):''}</div>
+      </div>
+      <div class="ip-grid">
+        <div><span class="ip-k">Fecha/Hora:</span> ${fmtFecha(r.fecha)} - ${esc(r.hora||'--')}</div>
+        <div><span class="ip-k">Sede:</span> ${esc(r.cancha||'--')}</div>
+        <div class="ip-full"><span class="ip-k">Motivo:</span> ${esc(r.motivo||'--')}</div>
+        ${r.diagnostico?`<div class="ip-full"><span class="ip-k">Diagnostico:</span> ${esc(r.diagnostico)}</div>`:''}
+        <div class="ip-full"><span class="ip-k">Atencion realizada:</span> ${esc(r.atencion||'--')}</div>
+        ${r.obs?`<div class="ip-full"><span class="ip-k">Observaciones:</span> ${esc(r.obs)}</div>`:''}
+        <div class="ip-full"><span class="ip-badge ${der?'der':'ok'}">${der?'Derivado':'Resuelto en el lugar'}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const teamHTML=profesionales.map(p=>`<div class="ip-chip">${esc(p)}</div>`).join('')||'<span style="color:#888;font-size:11px">Sin datos</span>';
+
+  const html=`
+  <div id="informe-render">
+    <style>
+      #informe-render{font-family:'DM Sans',Arial,sans-serif;color:#1A1A1A;font-size:11px;background:#fff;}
+      #informe-render .ip-header{background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);padding:22px 34px;display:flex;align-items:center;justify-content:space-between;}
+      #informe-render .ip-header img{height:48px;display:block;}
+      #informe-render .ip-htitle{color:#fff;margin-left:14px;}
+      #informe-render .ip-htitle h1{font-size:18px;font-weight:700;letter-spacing:.5px;margin:0;}
+      #informe-render .ip-htitle p{font-size:9.5px;color:#F5A623;font-weight:600;letter-spacing:1px;margin:2px 0 0 0;}
+      #informe-render .ip-hleft{display:flex;align-items:center;}
+      #informe-render .ip-tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 14px;border-radius:20px;font-size:9.5px;font-weight:600;letter-spacing:.5px;white-space:nowrap;}
+      #informe-render .ip-band{height:5px;background:#F5A623;}
+      #informe-render .ip-content{padding:16px 34px 6px 34px;}
+      #informe-render .ip-info{background:#F7F9FC;border:1px solid rgba(0,61,107,.1);border-radius:10px;padding:12px 20px;margin-bottom:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 26px;}
+      #informe-render .ip-info .l{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:#00508C;font-weight:700;margin-bottom:1px;}
+      #informe-render .ip-info .v{font-size:11px;font-weight:500;}
+      #informe-render .ip-sect{font-size:12px;font-weight:700;color:#003D6B;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px 0;border-bottom:2px solid #F5A623;padding-bottom:4px;}
+      #informe-render .ip-team{display:flex;flex-wrap:wrap;gap:7px;}
+      #informe-render .ip-chip{background:#003D6B;color:#fff;font-size:9.5px;font-weight:600;padding:5px 12px;border-radius:20px;}
+      #informe-render .ip-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px;}
+      #informe-render .ip-stat{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 8px;text-align:center;}
+      #informe-render .ip-stat .n{font-size:19px;font-weight:700;color:#003D6B;}
+      #informe-render .ip-stat.a .n{color:#DC2626;}
+      #informe-render .ip-stat .l{font-size:8px;color:#5a6b7a;text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
+      #informe-render .ip-patient{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 16px;margin-bottom:8px;}
+      #informe-render .ip-patient-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+      #informe-render .ip-patient-name{font-size:12px;font-weight:700;color:#003D6B;}
+      #informe-render .ip-patient-meta{font-size:9px;color:#5a6b7a;}
+      #informe-render .ip-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 22px;font-size:10px;}
+      #informe-render .ip-k{color:#00508C;font-weight:700;}
+      #informe-render .ip-full{grid-column:1/-1;}
+      #informe-render .ip-badge{display:inline-block;font-size:8.5px;font-weight:700;padding:3px 10px;border-radius:10px;color:#fff;}
+      #informe-render .ip-badge.ok{background:#16A34A;}
+      #informe-render .ip-badge.der{background:#DC2626;}
+      #informe-render .ip-footer{margin-top:12px;background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);color:#fff;padding:14px 34px;display:flex;justify-content:space-between;align-items:center;}
+      #informe-render .ip-footer .fw{font-size:10px;font-weight:700;}
+      #informe-render .ip-footer .fs{font-size:8.5px;color:rgba(255,255,255,.8);margin-top:2px;}
+      #informe-render .ip-footer .fc{text-align:right;font-size:9px;line-height:1.7;}
+    </style>
+    <div class="ip-header">
+      <div class="ip-hleft">
+        <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png" crossorigin="anonymous" onerror="this.style.display='none'">
+        <div class="ip-htitle"><h1>ALMA SALUD</h1><p>ASISTENCIA Y COBERTURA MEDICA PARA TUS EVENTOS</p></div>
+      </div>
+      <div class="ip-tag">INFORME DE COBERTURA MEDICA</div>
+    </div>
+    <div class="ip-band"></div>
+    <div class="ip-content">
+      <div class="ip-info">
+        <div><div class="l">Evento</div><div class="v">${esc(eventoActual||'--')}</div></div>
+        <div><div class="l">Fecha</div><div class="v">${fechaTxt}</div></div>
+        <div><div class="l">Sede(s)</div><div class="v">${esc(sedes.join(', ')||'--')}</div></div>
+        <div><div class="l">Registros incluidos</div><div class="v">${lista.length} de ${registros.length} totales</div></div>
+      </div>
+      <div class="ip-sect">Equipo profesional</div>
+      <div class="ip-team">${teamHTML}</div>
+      <div class="ip-sect">Resumen general</div>
+      <div class="ip-stats">
+        <div class="ip-stat"><div class="n">${lista.length}</div><div class="l">Pacientes atendidos</div></div>
+        <div class="ip-stat a"><div class="n">${totalDer}</div><div class="l">Derivaciones</div></div>
+        <div class="ip-stat"><div class="n">${totalMen}</div><div class="l">Menores</div></div>
+        <div class="ip-stat"><div class="n">${profesionales.length}</div><div class="l">Profesionales</div></div>
+      </div>
+      <div class="ip-sect">Detalle de atenciones</div>
+      ${cardsHTML}
+    </div>
+    <div class="ip-footer">
+      <div><div class="fw">ALMA SALUD</div><div class="fs">Asistencia y cobertura medica para tus eventos</div></div>
+      <div class="fc">almasalud.med@gmail.com &nbsp;|&nbsp; +54 9 11 2338-5830<br>@almasalud.med &nbsp;|&nbsp; www.almasalud.com.ar</div>
+    </div>
+  </div>`;
+
+  const wrap=document.createElement('div');
+  wrap.style.position='absolute';wrap.style.top='0';wrap.style.left='0';wrap.style.width='0';wrap.style.height='0';wrap.style.overflow='hidden';
+  const container=document.createElement('div');
+  container.style.width='794px';
+  container.innerHTML=html;
+  wrap.appendChild(container);
+  document.body.appendChild(wrap);
+
+  const restore=()=>{if(btn){btn.textContent=btnTxtOrig;btn.disabled=false;}if(wrap.parentNode)document.body.removeChild(wrap);};
+
+  const opt={
+    margin:0,
+    filename:'AlmaSalud_Informe_'+(eventoActual||'evento').replace(/[^a-zA-Z0-9]/g,'_').substring(0,30)+'.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},
+    jsPDF:{unit:'pt',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','avoid-all'],avoid:'.ip-patient'}
+  };
+
+  html2pdf().set(opt).from(container).save().then(restore).catch((e)=>{console.error(e);alert('Ocurrio un error generando el PDF.');restore();});
 };
 
 // ── Init ──
