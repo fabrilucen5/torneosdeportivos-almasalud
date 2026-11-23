@@ -384,16 +384,17 @@ function normalizarFechaDDMMYYYY(f) {
   return f;
 }
 function mapFichajeRow(o) {
+  const totalRaw = pick(o, ['Total trabajado','Total Trabajado','Horas','horas','TotalHoras','Horas trabajadas']);
   return {
     fecha: normalizarFechaDDMMYYYY(pick(o, ['Fecha','fecha'])),
     nombre: pick(o, ['Nombre','nombre']),
     rol: pick(o, ['Rol','rol']),
-    evento: pick(o, ['Evento','evento']),
+    evento: pick(o, ['Evento','evento','Evento/Cliente']),
     lugar: pick(o, ['Lugar','lugar','Establecimiento','establecimiento']),
     entrada: pick(o, ['Entrada','entrada','Hora entrada']),
     salida: pick(o, ['Salida','salida','Hora salida']),
-    totalHorasDisplay: pick(o, ['Horas','horas','TotalHoras','Horas trabajadas']),
-    totalHoras: '',
+    totalHorasDisplay: totalRaw !== '' ? (String(totalRaw).replace('.', ',') + 'h') : '',
+    totalHoras: totalRaw !== '' ? String(totalRaw).replace(',', '.') : '',
     obs: pick(o, ['Observaciones','observaciones','obs'])
   };
 }

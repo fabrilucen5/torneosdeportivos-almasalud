@@ -507,16 +507,16 @@ function mapPacienteRow(o) {
     edad: pick(o, ['Edad','edad']),
     dni: pick(o, ['DNI','Dni','dni']),
     equipo: pick(o, ['Equipo','equipo']),
-    categoria: pick(o, ['Categoria','categoria']),
+    categoria: pick(o, ['Categoria','categoria','Categoría']),
     motivo: pick(o, ['Motivo','motivo']),
-    zona: pick(o, ['Zona','zona']),
-    diagnostico: pick(o, ['Diagnostico','diagnostico']),
-    atencion: pick(o, ['Atencion','atencion']),
+    zona: pick(o, ['Zona','zona','Zona afectada']),
+    diagnostico: pick(o, ['Diagnostico','diagnostico','Diagnóstico']),
+    atencion: pick(o, ['Atencion','atencion','Atención realizada','Atencion realizada']),
     obs: pick(o, ['Observaciones','observaciones','obs']),
-    derivacion: pick(o, ['Derivacion','derivacion']) || 'NO',
-    derDetalle: pick(o, ['DetalleDerivacion','derDetalle']),
+    derivacion: pick(o, ['Derivacion','derivacion','Derivación']) || 'NO',
+    derDetalle: pick(o, ['DetalleDerivacion','derDetalle','Detalle derivación','Detalle derivacion']),
     tutor: pick(o, ['Tutor','tutor']),
-    telefono: pick(o, ['Telefono','telefono'])
+    telefono: pick(o, ['Telefono','telefono','Teléfono'])
   };
 }
 
