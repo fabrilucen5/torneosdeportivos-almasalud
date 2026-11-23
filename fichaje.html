@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alma Salud - Registro de Asistencia</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -29,19 +30,22 @@ body { font-family: 'Poppins', 'Inter', sans-serif; color: var(--text); font-siz
 .field { margin-bottom: 14px; }
 .field:last-child { margin-bottom: 0; }
 label { display: block; font-size: 11px; font-weight: 600; color: var(--navy); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-input, select, textarea { width: 100%; font-size: 16px; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 9px; background: white; color: var(--text); transition: border-color 0.2s; font-family: 'Poppins', 'Inter', sans-serif; -webkit-appearance: none; appearance: none; }
+input, select, textarea { width: 100%; font-size: 16px; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 9px; background: white; color: var(--text); transition: border-color 0.2s; font-family: 'Poppins', 'Inter', sans-serif; }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--blue); }
 textarea { resize: vertical; min-height: 80px; }
-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7494' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .horas-display { background: var(--bg); border: 1.5px solid var(--gold); border-radius: 9px; padding: 12px 14px; font-size: 18px; font-weight: 700; color: var(--navy); text-align: center; }
-.btn-primary { width: 100%; padding: 15px; background: var(--navy); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: background 0.2s; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.btn-primary { width: 100%; padding: 15px; background: var(--navy); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: background 0.2s; font-family: 'Poppins', sans-serif; }
 .btn-primary:active { background: var(--blue); }
 .btn-primary:disabled { background: #aaa; cursor: not-allowed; }
-.btn-gold { padding: 10px 18px; background: var(--gold); color: var(--navy); border: none; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.btn-gold { padding: 10px 18px; background: var(--gold); color: var(--navy); border: none; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: 'Poppins', sans-serif; }
 .btn-gold:active { background: var(--gold-hover); }
-.btn-danger { padding: 10px 18px; background: white; color: #991b1b; border: 1.5px solid #fca5a5; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.btn-gold:disabled { background: #ccc; color: #888; cursor: not-allowed; }
+.btn-outline { padding: 10px 18px; background: white; color: var(--navy); border: 1.5px solid var(--navy); border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background 0.2s; }
+.btn-outline:active { background: var(--bg); }
+.btn-outline:disabled { color: #aaa; border-color: #ddd; cursor: not-allowed; }
+.btn-danger { padding: 10px 18px; background: white; color: #991b1b; border: 1.5px solid #fca5a5; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; }
 .btn-danger:active { background: #fef2f2; }
 .alert { border-radius: 10px; padding: 13px 16px; font-size: 15px; font-weight: 500; margin-bottom: 14px; display: none; }
 .alert-ok { background: #eaf6ee; border: 1.5px solid #a8dbb5; color: #1e6b38; }
@@ -55,7 +59,18 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .top-bar p { font-size: 15px; font-weight: 600; color: var(--navy); }
 .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .filter-row { margin-bottom: 14px; }
-.filter-row select { width: auto; font-size: 14px; padding: 9px 36px 9px 12px; }
+.filter-row select { width: auto; font-size: 14px; padding: 9px 12px; }
+.sync-status { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+.sync-status.warn { color: #D97706; }
+.label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.label-row label { margin-bottom: 0; }
+.btn-refresh { background: none; border: none; color: var(--blue); font-size: 17px; cursor: pointer; padding: 0 4px; line-height: 1; }
+.btn-refresh:active { color: var(--navy); }
+.btn-refresh.spin { animation: spin .8s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.otro-evento { display: none; margin-top: 10px; }
+.otro-evento.show { display: block; }
+.evento-note { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 .record { border-bottom: 0.5px solid var(--border); padding: 16px 0; }
 .record:last-child { border-bottom: none; }
 .rec-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
@@ -93,19 +108,17 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 </head>
 <body>
 
-<!-- MODAL REINICIO -->
 <div class="overlay" id="modal-reinicio">
   <div class="modal">
-    <h3>&iquest;Reiniciar registros?</h3>
-    <p>Esta acci&oacute;n borra todos los registros locales. Los datos ya enviados se mantienen guardados.</p>
+    <h3>Reiniciar registros?</h3>
+    <p>Esta accion borra todos los registros locales. Los datos ya enviados se mantienen guardados.</p>
     <div class="modal-btns">
-      <button class="btn-danger" onclick="confirmarReinicio()">S&iacute;, reiniciar</button>
+      <button class="btn-danger" onclick="confirmarReinicio()">Si, reiniciar</button>
       <button class="btn-gold" onclick="cerrarModal()">Cancelar</button>
     </div>
   </div>
 </div>
 
-<!-- APP -->
 <div class="wrap">
   <div class="header">
     <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png"
@@ -125,9 +138,9 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 
   <div class="body">
     <div id="sec-form">
-      <div class="alert alert-ok" id="ok">&#10003; &iexcl;Registro exitoso.</div>
-      <div class="alert alert-err" id="err-campos">Complet&aacute; todos los campos antes de registrar.</div>
-      <div class="alert alert-err" id="err-envio">Hubo un problema al enviar. El registro se guard&oacute; localmente.</div>
+      <div class="alert alert-ok" id="ok">Registro exitoso.</div>
+      <div class="alert alert-err" id="err-campos">Completa todos los campos antes de registrar.</div>
+      <div class="alert alert-err" id="err-envio">Hubo un problema al enviar. El registro se guardo localmente.</div>
       <div class="alert alert-info" id="enviando">Enviando registro...</div>
 
       <div class="card">
@@ -141,9 +154,9 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
             <label>Rol</label>
             <select id="rol">
               <option value="">Seleccionar...</option>
-              <option>M&eacute;dico/a</option>
+              <option>Medico/a</option>
               <option>Enfermero/a</option>
-              <option>Kinesiol&oacute;go/a</option>
+              <option>Kinesiologo/a</option>
               <option>Otro</option>
             </select>
           </div>
@@ -153,11 +166,20 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       <div class="card">
         <div class="section-title">Datos del evento</div>
         <div class="field">
-          <label>Evento / cliente</label>
-          <input type="text" id="evento" placeholder="Ej: Torneo Nacional de Handball" autocomplete="off" autocorrect="off">
+          <div class="label-row">
+            <label>Evento / torneo</label>
+            <button type="button" class="btn-refresh" id="btn-refresh-torneos" onclick="actualizarTorneos()" title="Actualizar lista de torneos">Actualizar</button>
+          </div>
+          <select id="evento" onchange="toggleOtroEvento()">
+            <option value="">Cargando torneos...</option>
+          </select>
+          <div class="otro-evento" id="otro-evento-wrap">
+            <input type="text" id="evento-otro" placeholder="Nombre exacto del torneo/evento" autocomplete="off" autocorrect="off">
+            <div class="evento-note">No esta en la lista. Avisale al administrador para que lo agregue al Sheet y evitar nombres duplicados.</div>
+          </div>
         </div>
         <div class="field">
-          <label>Establecimiento / direcci&oacute;n</label>
+          <label>Establecimiento / direccion</label>
           <input type="text" id="lugar" placeholder="Ej: Polideportivo Torito, San Martin" autocomplete="off" autocorrect="off">
         </div>
       </div>
@@ -196,20 +218,23 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
         <div class="top-bar">
           <p>Fichajes registrados</p>
           <div class="top-actions">
-            <button class="btn-gold" onclick="exportarCSV()">&#8595; Descargar CSV</button>
+            <button class="btn-outline" id="btn-sync" onclick="sincronizarSheet(true)">Sincronizar</button>
+            <button class="btn-gold" id="btn-pdf-fichajes" onclick="exportarInformePDF()">Informe PDF</button>
+            <button class="btn-gold" onclick="exportarCSV()">Descargar CSV</button>
             <button class="btn-danger" onclick="mostrarModal()">Reiniciar</button>
           </div>
         </div>
+        <div class="sync-status" id="sync-status">Mostrando fichajes guardados en este dispositivo. Toca "Sincronizar" para traer los de todo el torneo.</div>
         <div class="filter-row">
           <select id="f-rol" onchange="renderReg()">
             <option value="">Todos los roles</option>
-            <option>M&eacute;dico/a</option>
+            <option>Medico/a</option>
             <option>Enfermero/a</option>
-            <option>Kinesiol&oacute;go/a</option>
+            <option>Kinesiologo/a</option>
             <option>Otro</option>
           </select>
         </div>
-        <div id="lista"><div class="empty">No hay registros todav&iacute;a.</div></div>
+        <div id="lista"><div class="empty">No hay registros todavia.</div></div>
       </div>
     </div>
   </div>
@@ -218,17 +243,18 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <script>
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwkEradQlz1xKHi92tNMTopf9cpe07KJFzWaZoM3_htIK1abuo0J8ssPoaKzDDbHRF6/exec';
 const STORAGE_KEY = 'as_fichajes_v2';
+const TORNEOS_CACHE_KEY = 'as_torneos_cache_v1';
 
-// ── TODAS las funciones en window — patrón que funciona en mobile ──
+let sheetFichajes = null;
 
 window.calcHoras = function() {
   const e = document.getElementById('entrada').value;
   const s = document.getElementById('salida').value;
   const el = document.getElementById('total-horas');
   if (!e || !s) { el.textContent = '--'; delete el.dataset.decimal; return; }
-  const [eh, em] = e.split(':').map(Number);
-  const [sh, sm] = s.split(':').map(Number);
-  let mins = (sh * 60 + sm) - (eh * 60 + em);
+  const p1 = e.split(':').map(Number);
+  const p2 = s.split(':').map(Number);
+  let mins = (p2[0] * 60 + p2[1]) - (p1[0] * 60 + p1[1]);
   if (mins < 0) mins += 24 * 60;
   const h = Math.floor(mins / 60);
   const m = mins % 60;
@@ -239,19 +265,13 @@ window.calcHoras = function() {
 window.goTab = function(s, btn) {
   document.getElementById('sec-form').style.display = s === 'form' ? 'block' : 'none';
   document.getElementById('sec-reg').style.display = s === 'reg' ? 'block' : 'none';
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   btn.classList.add('active');
-  if (s === 'reg') { stats(); renderReg(); }
+  if (s === 'reg') { stats(); renderReg(); window.sincronizarSheet(false); }
 };
 
-window.mostrarModal = function() {
-  document.getElementById('modal-reinicio').classList.add('show');
-};
-
-window.cerrarModal = function() {
-  document.getElementById('modal-reinicio').classList.remove('show');
-};
-
+window.mostrarModal = function() { document.getElementById('modal-reinicio').classList.add('show'); };
+window.cerrarModal = function() { document.getElementById('modal-reinicio').classList.remove('show'); };
 window.confirmarReinicio = function() {
   localStorage.removeItem(STORAGE_KEY);
   window.cerrarModal();
@@ -259,10 +279,18 @@ window.confirmarReinicio = function() {
   renderReg();
 };
 
+window.toggleOtroEvento = function() {
+  const sel = document.getElementById('evento');
+  document.getElementById('otro-evento-wrap').classList.toggle('show', sel.value === '__otro__');
+};
+
+window.actualizarTorneos = function() { cargarTorneos(true); };
+
 window.registrar = async function() {
   const nombre = document.getElementById('nombre').value.trim();
   const rol = document.getElementById('rol').value;
-  const evento = document.getElementById('evento').value.trim();
+  const eventoSel = document.getElementById('evento').value;
+  const evento = eventoSel === '__otro__' ? document.getElementById('evento-otro').value.trim() : eventoSel;
   const lugar = document.getElementById('lugar').value.trim();
   const entrada = document.getElementById('entrada').value;
   const salida = document.getElementById('salida').value;
@@ -281,10 +309,10 @@ window.registrar = async function() {
     id: Date.now(),
     fecha: now.toLocaleDateString('es-AR'),
     fechaISO: now.toISOString().split('T')[0],
-    nombre, rol, evento, lugar, entrada, salida,
+    nombre: nombre, rol: rol, evento: evento, lugar: lugar, entrada: entrada, salida: salida,
     totalHorasDisplay: totalDisplay !== '--' ? totalDisplay : '',
     totalHoras: totalDecimal,
-    obs
+    obs: obs
   };
 
   const btn = document.getElementById('btn-reg');
@@ -294,8 +322,7 @@ window.registrar = async function() {
 
   try {
     await fetch(SHEETS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(registro)
     });
@@ -312,8 +339,10 @@ window.registrar = async function() {
 
   btn.disabled = false;
   btn.textContent = 'Registrar fichaje';
-  ['nombre', 'evento', 'lugar', 'obs'].forEach(id => document.getElementById(id).value = '');
+  ['nombre', 'lugar', 'obs', 'evento-otro'].forEach(function(id){ document.getElementById(id).value = ''; });
   document.getElementById('rol').value = '';
+  document.getElementById('evento').value = '';
+  document.getElementById('otro-evento-wrap').classList.remove('show');
   document.getElementById('entrada').value = '';
   document.getElementById('salida').value = '';
   document.getElementById('total-horas').textContent = '--';
@@ -321,74 +350,311 @@ window.registrar = async function() {
 };
 
 window.exportarCSV = function() {
-  const d = getData();
+  const d = datosActuales();
   if (!d.length) { alert('No hay registros para exportar.'); return; }
   const cols = ['Fecha','Nombre','Rol','Evento/Cliente','Establecimiento','Hora entrada','Hora salida','Horas trabajadas','Observaciones'];
-  let csv = '\uFEFF' + cols.map(c => '"' + c + '"').join(';') + '\n';
-  d.forEach(r => {
-    csv += [r.fecha, r.nombre, r.rol, r.evento, r.lugar, r.entrada, r.salida, r.totalHoras || '', r.obs || '']
-      .map(v => '"' + String(v).replace(/"/g, '""') + '"').join(';') + '\n';
+  let csv = cols.map(function(c){ return '"' + c + '"'; }).join(';') + '\n';
+  d.forEach(function(r){
+    csv += [r.fecha, r.nombre, r.rol, r.evento, r.lugar, r.entrada, r.salida, r.totalHorasDisplay || r.totalHoras || '', r.obs || '']
+      .map(function(v){ return '"' + String(v).replace(/"/g, '""') + '"'; }).join(';') + '\n';
   });
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = 'Fichajes_AlmaSalud_' + new Date().toLocaleDateString('es-AR').replace(/\//g, '-') + '.csv';
   document.body.appendChild(a); a.click();
-  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 300);
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 300);
 };
 
 window.renderReg = function() { renderReg(); };
 
-// ── Funciones internas ──
+function pick(o, keys) {
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i];
+    if (o[k] !== undefined && o[k] !== null && String(o[k]).trim() !== '') return o[k];
+  }
+  return '';
+}
+function normalizarFechaDDMMYYYY(f) {
+  if (!f) return '';
+  f = String(f).trim();
+  const m = f.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[3] + '/' + m[2] + '/' + m[1];
+  return f;
+}
+function mapFichajeRow(o) {
+  return {
+    fecha: normalizarFechaDDMMYYYY(pick(o, ['Fecha','fecha'])),
+    nombre: pick(o, ['Nombre','nombre']),
+    rol: pick(o, ['Rol','rol']),
+    evento: pick(o, ['Evento','evento']),
+    lugar: pick(o, ['Lugar','lugar','Establecimiento','establecimiento']),
+    entrada: pick(o, ['Entrada','entrada','Hora entrada']),
+    salida: pick(o, ['Salida','salida','Hora salida']),
+    totalHorasDisplay: pick(o, ['Horas','horas','TotalHoras','Horas trabajadas']),
+    totalHoras: '',
+    obs: pick(o, ['Observaciones','observaciones','obs'])
+  };
+}
+
+function datosActuales() {
+  return sheetFichajes !== null ? sheetFichajes : getData();
+}
+
+window.sincronizarSheet = function(forzado) {
+  const statusEl = document.getElementById('sync-status');
+  const btn = document.getElementById('btn-sync');
+  if (btn) btn.disabled = true;
+  statusEl.className = 'sync-status';
+  statusEl.textContent = 'Sincronizando con el Sheet...';
+  fetch(SHEETS_URL + '?tipo=get_fichajes')
+    .then(function(r){ return r.json(); })
+    .then(function(resp){
+      const lista = resp && resp.fichajes ? resp.fichajes : resp;
+      if (!Array.isArray(lista)) throw new Error('formato invalido');
+      sheetFichajes = lista.map(mapFichajeRow);
+      statusEl.textContent = 'Mostrando ' + sheetFichajes.length + ' fichajes de todo el torneo (sincronizado ahora).';
+      stats(); renderReg();
+    })
+    .catch(function(){
+      statusEl.className = 'sync-status warn';
+      statusEl.textContent = 'No se pudo sincronizar con el Sheet. Mostrando solo los fichajes guardados en este dispositivo.';
+      stats(); renderReg();
+    })
+    .finally(function(){ if (btn) btn.disabled = false; });
+};
+
+function cargarTorneos(forzar) {
+  const refreshBtn = document.getElementById('btn-refresh-torneos');
+  if (refreshBtn) refreshBtn.classList.add('spin');
+  fetch(SHEETS_URL + '?tipo=get_torneos')
+    .then(function(r){ return r.json(); })
+    .then(function(resp){
+      const lista = resp && resp.torneos ? resp.torneos : resp;
+      if (!Array.isArray(lista)) throw new Error('formato invalido');
+      localStorage.setItem(TORNEOS_CACHE_KEY, JSON.stringify(lista));
+      renderTorneos(lista);
+    })
+    .catch(function(){
+      if (forzar) alert('No se pudo actualizar la lista de torneos. Revisa tu conexion a internet.');
+      renderTorneos(getTorneosCache());
+    })
+    .finally(function(){ if (refreshBtn) refreshBtn.classList.remove('spin'); });
+}
+function getTorneosCache() {
+  try { return JSON.parse(localStorage.getItem(TORNEOS_CACHE_KEY) || '[]'); } catch(e) { return []; }
+}
+function renderTorneos(lista) {
+  const sel = document.getElementById('evento');
+  const prev = sel.value;
+  let optionsHtml = '<option value="">Seleccionar torneo/evento...</option>';
+  lista.forEach(function(t){
+    optionsHtml += '<option value="' + escAttr(t) + '">' + esc(t) + '</option>';
+  });
+  optionsHtml += '<option value="__otro__">Otro (no esta en la lista)</option>';
+  sel.innerHTML = optionsHtml;
+  const opts = sel.options;
+  let found = false;
+  for (let i = 0; i < opts.length; i++) { if (opts[i].value === prev) found = true; }
+  if (prev && found) sel.value = prev;
+}
+function escAttr(s) { return esc(s).replace(/"/g, '&quot;'); }
+
+window.exportarInformePDF = function() {
+  const d = datosActuales();
+  const fr = document.getElementById('f-rol').value;
+  const lista = fr ? d.filter(function(r){ return r.rol === fr; }) : d;
+  if (!lista.length) { alert('No hay registros para exportar.'); return; }
+  if (typeof html2pdf === 'undefined') { alert('No se pudo cargar el generador de PDF. Verifica tu conexion a internet.'); return; }
+
+  const btn = document.getElementById('btn-pdf-fichajes');
+  const btnTxtOrig = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = 'Generando...'; btn.disabled = true; }
+
+  function uniq(arr) { const seen = {}; const out = []; arr.forEach(function(x){ if (x && !seen[x]) { seen[x] = true; out.push(x); } }); return out; }
+
+  const eventos = uniq(lista.map(function(r){ return r.evento; }));
+  const sedes = uniq(lista.map(function(r){ return r.lugar; }));
+  const profesionales = uniq(lista.map(function(r){ return r.nombre; }));
+  const fechas = uniq(lista.map(function(r){ return r.fecha; })).sort();
+  const fechaTxt = fechas.length ? (fechas.length === 1 ? fechas[0] : fechas[0] + ' al ' + fechas[fechas.length - 1]) : '--';
+  let totalMinutos = 0;
+  lista.forEach(function(r){
+    const dec = parseFloat(String(r.totalHoras || '').replace(',', '.'));
+    if (!isNaN(dec)) totalMinutos += dec * 60;
+  });
+  const totalHorasTxt = totalMinutos ? Math.floor(totalMinutos / 60) + 'h ' + String(Math.round(totalMinutos % 60)).padStart(2, '0') + 'm' : '--';
+
+  let cardsHTML = '';
+  lista.forEach(function(r, i){
+    cardsHTML += '<div class="ip-patient">'
+      + '<div class="ip-patient-top">'
+      + '<div class="ip-patient-name">' + (i + 1) + '. ' + esc(r.nombre) + '</div>'
+      + '<div class="ip-patient-meta">' + esc(r.rol || '--') + '</div>'
+      + '</div>'
+      + '<div class="ip-grid">'
+      + '<div><span class="ip-k">Fecha:</span> ' + esc(r.fecha || '--') + '</div>'
+      + '<div><span class="ip-k">Evento:</span> ' + esc(r.evento || '--') + '</div>'
+      + '<div><span class="ip-k">Establecimiento:</span> ' + esc(r.lugar || '--') + '</div>'
+      + '<div><span class="ip-k">Horario:</span> ' + esc(r.entrada || '--') + ' a ' + esc(r.salida || '--') + ' (' + esc(r.totalHorasDisplay || '--') + ')</div>'
+      + (r.obs ? '<div class="ip-full"><span class="ip-k">Observaciones:</span> ' + esc(r.obs) + '</div>' : '')
+      + '</div>'
+      + '</div>';
+  });
+
+  let teamHTML = '';
+  profesionales.forEach(function(p){ teamHTML += '<div class="ip-chip">' + esc(p) + '</div>'; });
+  if (!teamHTML) teamHTML = '<span style="color:#888;font-size:11px">Sin datos</span>';
+
+  const styleBlock = "#informe-render{font-family:'DM Sans',Arial,sans-serif;color:#1A1A1A;font-size:11px;background:#fff;}"
+    + "#informe-render .ip-header{background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);padding:22px 34px;display:flex;align-items:center;justify-content:space-between;}"
+    + "#informe-render .ip-header img{height:48px;display:block;}"
+    + "#informe-render .ip-htitle{color:#fff;margin-left:14px;}"
+    + "#informe-render .ip-htitle h1{font-size:18px;font-weight:700;letter-spacing:.5px;margin:0;}"
+    + "#informe-render .ip-htitle p{font-size:9.5px;color:#F5A623;font-weight:600;letter-spacing:1px;margin:2px 0 0 0;}"
+    + "#informe-render .ip-hleft{display:flex;align-items:center;}"
+    + "#informe-render .ip-tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 14px;border-radius:20px;font-size:9.5px;font-weight:600;letter-spacing:.5px;white-space:nowrap;}"
+    + "#informe-render .ip-band{height:5px;background:#F5A623;}"
+    + "#informe-render .ip-content{padding:16px 34px 6px 34px;}"
+    + "#informe-render .ip-info{background:#F7F9FC;border:1px solid rgba(0,61,107,.1);border-radius:10px;padding:12px 20px;margin-bottom:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 26px;}"
+    + "#informe-render .ip-info .l{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:#00508C;font-weight:700;margin-bottom:1px;}"
+    + "#informe-render .ip-info .v{font-size:11px;font-weight:500;}"
+    + "#informe-render .ip-sect{font-size:12px;font-weight:700;color:#003D6B;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px 0;border-bottom:2px solid #F5A623;padding-bottom:4px;}"
+    + "#informe-render .ip-team{display:flex;flex-wrap:wrap;gap:7px;}"
+    + "#informe-render .ip-chip{background:#003D6B;color:#fff;font-size:9.5px;font-weight:600;padding:5px 12px;border-radius:20px;}"
+    + "#informe-render .ip-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px;}"
+    + "#informe-render .ip-stat{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 8px;text-align:center;}"
+    + "#informe-render .ip-stat .n{font-size:19px;font-weight:700;color:#003D6B;}"
+    + "#informe-render .ip-stat .l{font-size:8px;color:#5a6b7a;text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}"
+    + "#informe-render .ip-patient{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 16px;margin-bottom:8px;}"
+    + "#informe-render .ip-patient-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}"
+    + "#informe-render .ip-patient-name{font-size:12px;font-weight:700;color:#003D6B;}"
+    + "#informe-render .ip-patient-meta{font-size:9px;color:#5a6b7a;}"
+    + "#informe-render .ip-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 22px;font-size:10px;}"
+    + "#informe-render .ip-k{color:#00508C;font-weight:700;}"
+    + "#informe-render .ip-full{grid-column:1/-1;}"
+    + "#informe-render .ip-footer{margin-top:12px;background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);color:#fff;padding:14px 34px;display:flex;justify-content:space-between;align-items:center;}"
+    + "#informe-render .ip-footer .fw{font-size:10px;font-weight:700;}"
+    + "#informe-render .ip-footer .fs{font-size:8.5px;color:rgba(255,255,255,.8);margin-top:2px;}"
+    + "#informe-render .ip-footer .fc{text-align:right;font-size:9px;line-height:1.7;}";
+
+  const html = '<div id="informe-render">'
+    + '<style>' + styleBlock + '</style>'
+    + '<div class="ip-header">'
+    + '<div class="ip-hleft">'
+    + "<img src=\"https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png\" crossorigin=\"anonymous\" onerror=\"this.style.display='none'\">"
+    + '<div class="ip-htitle"><h1>ALMA SALUD</h1><p>ASISTENCIA Y COBERTURA MEDICA PARA TUS EVENTOS</p></div>'
+    + '</div>'
+    + '<div class="ip-tag">INFORME DE ASISTENCIA</div>'
+    + '</div>'
+    + '<div class="ip-band"></div>'
+    + '<div class="ip-content">'
+    + '<div class="ip-info">'
+    + '<div><div class="l">Evento(s)</div><div class="v">' + esc(eventos.join(', ') || '--') + '</div></div>'
+    + '<div><div class="l">Fecha</div><div class="v">' + fechaTxt + '</div></div>'
+    + '<div><div class="l">Sede(s)</div><div class="v">' + esc(sedes.join(', ') || '--') + '</div></div>'
+    + '<div><div class="l">Registros incluidos</div><div class="v">' + lista.length + ' de ' + d.length + ' totales</div></div>'
+    + '</div>'
+    + '<div class="ip-sect">Equipo profesional</div>'
+    + '<div class="ip-team">' + teamHTML + '</div>'
+    + '<div class="ip-sect">Resumen general</div>'
+    + '<div class="ip-stats">'
+    + '<div class="ip-stat"><div class="n">' + lista.length + '</div><div class="l">Fichajes</div></div>'
+    + '<div class="ip-stat"><div class="n">' + profesionales.length + '</div><div class="l">Profesionales</div></div>'
+    + '<div class="ip-stat"><div class="n">' + totalHorasTxt + '</div><div class="l">Horas totales</div></div>'
+    + '<div class="ip-stat"><div class="n">' + eventos.length + '</div><div class="l">Eventos</div></div>'
+    + '</div>'
+    + '<div class="ip-sect">Detalle de fichajes</div>'
+    + cardsHTML
+    + '</div>'
+    + '<div class="ip-footer">'
+    + '<div><div class="fw">ALMA SALUD</div><div class="fs">Asistencia y cobertura medica para tus eventos</div></div>'
+    + '<div class="fc">almasalud.med@gmail.com | +54 9 11 2338-5830<br>@almasalud.med | www.almasalud.com.ar</div>'
+    + '</div>'
+    + '</div>';
+
+  const wrap = document.createElement('div');
+  wrap.style.position = 'absolute'; wrap.style.top = '0'; wrap.style.left = '0'; wrap.style.width = '0'; wrap.style.height = '0'; wrap.style.overflow = 'hidden';
+  const container = document.createElement('div');
+  container.style.width = '794px';
+  container.innerHTML = html;
+  wrap.appendChild(container);
+  document.body.appendChild(wrap);
+
+  const restore = function() { if (btn) { btn.textContent = btnTxtOrig; btn.disabled = false; } if (wrap.parentNode) document.body.removeChild(wrap); };
+
+  const opt = {
+    margin: 0,
+    filename: 'AlmaSalud_InformeAsistencia_' + new Date().toLocaleDateString('es-AR').replace(/\//g, '-') + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'avoid-all'], avoid: '.ip-patient' }
+  };
+
+  html2pdf().set(opt).from(container).save().then(restore).catch(function(e){ console.error(e); alert('Ocurrio un error generando el PDF.'); restore(); });
+};
+
 function getData() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
 }
 function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
 
 function mostrarAlerta(id, ms) {
-  ['ok', 'err-campos', 'err-envio', 'enviando'].forEach(i => {
+  ['ok', 'err-campos', 'err-envio', 'enviando'].forEach(function(i){
     document.getElementById(i).style.display = 'none';
   });
   document.getElementById(id).style.display = 'block';
-  if (ms) setTimeout(() => { document.getElementById(id).style.display = 'none'; }, ms);
+  if (ms) setTimeout(function(){ document.getElementById(id).style.display = 'none'; }, ms);
 }
 
 function stats() {
-  const d = getData();
-  const hoy = new Date().toISOString().split('T')[0];
+  const d = datosActuales();
+  const hoy = new Date().toLocaleDateString('es-AR');
   const sem = new Date(); sem.setDate(sem.getDate() - 7);
   document.getElementById('s-total').textContent = d.length;
-  document.getElementById('s-hoy').textContent = d.filter(r => r.fechaISO === hoy).length;
-  document.getElementById('s-sem').textContent = d.filter(r => new Date(r.fechaISO) >= sem).length;
+  document.getElementById('s-hoy').textContent = d.filter(function(r){ return r.fecha === hoy; }).length;
+  document.getElementById('s-sem').textContent = d.filter(function(r){
+    const m = String(r.fecha || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (!m) return false;
+    const dt = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+    return dt >= sem;
+  }).length;
 }
 
 function renderReg() {
-  const d = getData();
+  const d = datosActuales();
   const fr = document.getElementById('f-rol').value;
-  const items = fr ? d.filter(r => r.rol === fr) : d;
+  const items = fr ? d.filter(function(r){ return r.rol === fr; }) : d;
   const el = document.getElementById('lista');
   if (!items.length) { el.innerHTML = '<div class="empty">No hay registros para mostrar.</div>'; return; }
-  el.innerHTML = items.map(r => `
-    <div class="record">
-      <div class="rec-header">
-        <span class="rec-name">${esc(r.nombre)}</span>
-        <span class="rec-date">${r.fecha}</span>
-      </div>
-      <div class="badges">
-        <span class="badge b-rol">${esc(r.rol)}</span>
-        <span class="badge b-evento">${esc(r.evento)}</span>
-        <span class="badge b-lugar">${esc(r.lugar)}</span>
-        ${r.totalHorasDisplay ? '<span class="badge b-horas">' + esc(r.totalHorasDisplay) + '</span>' : ''}
-      </div>
-      <div class="rec-horas">Entrada: <strong>${r.entrada}</strong> &nbsp;|&nbsp; Salida: <strong>${r.salida}</strong></div>
-      ${r.obs ? '<div class="rec-obs">"' + esc(r.obs) + '"</div>' : ''}
-    </div>`).join('');
+  let out = '';
+  items.forEach(function(r){
+    out += '<div class="record">'
+      + '<div class="rec-header">'
+      + '<span class="rec-name">' + esc(r.nombre) + '</span>'
+      + '<span class="rec-date">' + r.fecha + '</span>'
+      + '</div>'
+      + '<div class="badges">'
+      + '<span class="badge b-rol">' + esc(r.rol) + '</span>'
+      + '<span class="badge b-evento">' + esc(r.evento) + '</span>'
+      + '<span class="badge b-lugar">' + esc(r.lugar) + '</span>'
+      + ((r.totalHorasDisplay || r.totalHoras) ? '<span class="badge b-horas">' + esc(r.totalHorasDisplay || r.totalHoras) + '</span>' : '')
+      + '</div>'
+      + '<div class="rec-horas">Entrada: <strong>' + r.entrada + '</strong> | Salida: <strong>' + r.salida + '</strong></div>'
+      + (r.obs ? '<div class="rec-obs">"' + esc(r.obs) + '"</div>' : '')
+      + '</div>';
+  });
+  el.innerHTML = out;
 }
 
 function esc(s) {
   return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
 }
+
+renderTorneos(getTorneosCache());
+cargarTorneos(false);
 </script>
 </body>
 </html>

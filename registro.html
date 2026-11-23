@@ -40,10 +40,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15
 .span2{grid-column:span 2}
 .field{margin-bottom:4px}
 label{display:block;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
-input,select,textarea{width:100%;font-size:16px;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;background:#fff;color:var(--text);font-family:var(--font);transition:.2s;-webkit-appearance:none;appearance:none}
+input,select,textarea{width:100%;font-size:16px;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;background:#fff;color:var(--text);font-family:var(--font);transition:.2s}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy2)}
 textarea{resize:vertical;min-height:80px}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7494' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 .readonly-field{background:var(--bg);border-color:var(--border);color:var(--muted);font-family:var(--mono);font-size:13px}
 .toggle-row{display:flex;align-items:center;gap:14px}
 .toggle{position:relative;width:52px;height:28px;flex-shrink:0}
@@ -58,13 +57,15 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .tutor-section{display:none}
 .tutor-section.show{display:block}
 .menor-note{background:#FFF8E7;border:1px solid #F5A623;border-radius:8px;padding:12px 16px;font-size:13px;color:#7a4f00;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px}
-.btn-primary{width:100%;padding:15px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s;margin-top:6px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-primary{width:100%;padding:15px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s;margin-top:6px}
 .btn-primary:active{background:var(--navy2)}
-.btn-gold{padding:11px 18px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-gold{padding:11px 18px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
 .btn-gold:active{background:var(--gold2)}
-.btn-outline{padding:11px 18px;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-gold:disabled{background:#ccc;color:#888;cursor:not-allowed}
+.btn-outline{padding:11px 18px;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s}
 .btn-outline:active{background:var(--bg)}
-.btn-danger-sm{padding:9px 14px;background:#fff;color:var(--red);border:1.5px solid var(--red-border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-outline:disabled{color:#aaa;border-color:#ddd;cursor:not-allowed}
+.btn-danger-sm{padding:9px 14px;background:#fff;color:var(--red);border:1.5px solid var(--red-border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
 .alert{border-radius:10px;padding:14px 18px;font-size:15px;font-weight:500;margin-bottom:18px;display:none}
 .alert.show{display:block}
 .alert-ok{background:var(--green-bg);border:1.5px solid var(--green-border);color:#14532d}
@@ -78,7 +79,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .filters select,.filters input[type=text]{width:auto;font-size:14px;padding:9px 13px;border-radius:8px;min-width:140px}
-.toolbar-actions{display:flex;gap:8px}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.sync-status{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.sync-status.warn{color:#D97706}
 .record{border-bottom:1px solid var(--border);padding:18px 0}
 .record:last-child{border-bottom:none}
 .rec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
@@ -91,7 +94,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .b-evento{background:#FFF4E0;color:#7a4f00}
 .b-der{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
 .rec-detail{font-size:14px;color:var(--muted);line-height:1.7}
-.btn-expand{padding:7px 14px;background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-expand{padding:7px 14px;background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
 .rec-full{display:none;margin-top:12px;background:var(--bg);border-radius:10px;padding:16px;font-size:13px;line-height:1.9}
 .rec-full.show{display:block}
 .rec-full-row{display:flex;gap:8px;padding:3px 0;flex-wrap:wrap}
@@ -130,27 +133,25 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </head>
 <body>
 
-<!-- MODAL EVENTO -->
 <div class="overlay show" id="modal-evento">
   <div class="modal">
-    <h3>&#9881; Configuraci&oacute;n de sesi&oacute;n</h3>
-    <p>Antes de comenzar, ingres&aacute; el nombre del evento o torneo de hoy. Se asociar&aacute; a todos los registros.</p>
+    <h3>Configuracion de sesion</h3>
+    <p>Antes de comenzar, ingresa el nombre del evento o torneo de hoy. Se asociara a todos los registros.</p>
     <div class="field">
       <label>Nombre del evento / torneo <span style="color:#DC2626">*</span></label>
       <input type="text" id="input-evento-modal" placeholder="Ej: Torneo Nacional Juveniles A 2026" autocomplete="off" autocorrect="off">
     </div>
-    <div id="modal-evento-err" style="display:none;color:#DC2626;font-size:13px;margin-top:-12px;margin-bottom:12px">&#9888; Ingres&aacute; el nombre del evento.</div>
+    <div id="modal-evento-err" style="display:none;color:#DC2626;font-size:13px;margin-top:-12px;margin-bottom:12px">Ingresa el nombre del evento.</div>
     <div class="modal-btns">
-      <button class="btn-gold" onclick="confirmarEvento()">Confirmar &#8594;</button>
+      <button class="btn-gold" onclick="confirmarEvento()">Confirmar</button>
     </div>
   </div>
 </div>
 
-<!-- CONFIRM DELETE -->
 <div class="overlay" id="confirm-overlay">
   <div class="modal" style="max-width:340px;text-align:center">
-    <h3>&#9888; Eliminar registro</h3>
-    <p>&iquest;Seguro que quer&eacute;s eliminar este registro? Esta acci&oacute;n no se puede deshacer.</p>
+    <h3>Eliminar registro</h3>
+    <p>Seguro que queres eliminar este registro? Esta accion no se puede deshacer.</p>
     <div class="modal-btns" style="justify-content:center;margin-top:8px">
       <button class="btn-outline" onclick="cerrarConfirm()">Cancelar</button>
       <button class="btn-danger-sm" onclick="ejecutarEliminar()">Eliminar</button>
@@ -158,7 +159,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
-<!-- HEADER -->
 <div class="hdr">
   <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png"
     alt="Alma Salud"
@@ -170,26 +170,24 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
   <div class="hdr-evento" onclick="abrirModalEvento()">
     <div class="hdr-evento-label">Evento activo</div>
-    <div class="hdr-evento-value" id="evento-display">&#8212;</div>
-    <div class="hdr-evento-edit">&#9998; Cambiar</div>
+    <div class="hdr-evento-value" id="evento-display">--</div>
+    <div class="hdr-evento-edit">Cambiar</div>
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
-  <button class="tab active" onclick="showTab('reg',this)">&#128203; REGISTRO</button>
-  <button class="tab" onclick="showTab('hist',this)">&#128193; HISTORIAL</button>
+  <button class="tab active" onclick="showTab('reg',this)">REGISTRO</button>
+  <button class="tab" onclick="showTab('hist',this)">HISTORIAL</button>
 </div>
 
 <div class="body">
 
-<!-- ── REGISTRO ── -->
 <div class="sec active" id="sec-reg">
-  <div id="alert-ok"  class="alert alert-ok">&#9989; &iexcl;Registro exitoso!</div>
-  <div id="alert-err" class="alert alert-err">&#9888; Complet&aacute; los campos obligatorios antes de guardar.</div>
+  <div id="alert-ok"  class="alert alert-ok">Registro exitoso!</div>
+  <div id="alert-err" class="alert alert-err">Completa los campos obligatorios antes de guardar.</div>
 
   <div class="card">
-    <div class="card-title">&#128205; Contexto de atenci&oacute;n</div>
+    <div class="card-title">Contexto de atencion</div>
     <div class="g3">
       <div class="field">
         <label>Evento</label>
@@ -200,7 +198,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <input type="date" id="f-fecha">
       </div>
       <div class="field">
-        <label>Hora de atenci&oacute;n</label>
+        <label>Hora de atencion</label>
         <input class="readonly-field" id="f-hora" readonly>
       </div>
     </div>
@@ -217,7 +215,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 
   <div class="card">
-    <div class="card-title">&#127939; Datos del paciente</div>
+    <div class="card-title">Datos del paciente</div>
     <div class="g3">
       <div class="field span2">
         <label>Nombre y apellido <span style="color:#DC2626">*</span></label>
@@ -238,19 +236,19 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <input type="text" id="f-equipo" placeholder="Nombre del club o equipo" autocomplete="off" autocorrect="off">
       </div>
       <div class="field">
-        <label>Categor&iacute;a</label>
+        <label>Categoria</label>
         <input type="text" id="f-categoria" placeholder="Ej: U16, U14, Mayor..." autocomplete="off">
       </div>
     </div>
     <div class="tutor-section" id="tutor-section">
-      <div class="menor-note">&#9888; Paciente menor de edad &mdash; completar datos del tutor/padre/madre.</div>
+      <div class="menor-note">Paciente menor de edad - completar datos del tutor/padre/madre.</div>
       <div class="g2">
         <div class="field">
           <label>Nombre del padre / madre / tutor <span style="color:#DC2626">*</span></label>
           <input type="text" id="f-tutor" placeholder="Nombre completo" autocomplete="off" autocorrect="off">
         </div>
         <div class="field">
-          <label>Tel&eacute;fono de contacto <span style="color:#DC2626">*</span></label>
+          <label>Telefono de contacto <span style="color:#DC2626">*</span></label>
           <input type="tel" id="f-telefono" placeholder="Numero / WhatsApp" inputmode="tel">
         </div>
       </div>
@@ -258,7 +256,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 
   <div class="card">
-    <div class="card-title">&#129658; Datos cl&iacute;nicos</div>
+    <div class="card-title">Datos clinicos</div>
     <div class="g2">
       <div class="field">
         <label>Motivo de consulta <span style="color:#DC2626">*</span></label>
@@ -271,11 +269,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="g2">
       <div class="field">
-        <label>Diagn&oacute;stico presuntivo</label>
+        <label>Diagnostico presuntivo</label>
         <input type="text" id="f-diagnostico" placeholder="Ej: Esguince G1, contractura muscular..." autocomplete="off" autocorrect="off">
       </div>
       <div class="field">
-        <label>Atenci&oacute;n realizada <span style="color:#DC2626">*</span></label>
+        <label>Atencion realizada <span style="color:#DC2626">*</span></label>
         <input type="text" id="f-atencion" placeholder="Ej: Vendaje, hielo, evaluacion..." autocomplete="off" autocorrect="off">
       </div>
     </div>
@@ -286,7 +284,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 
   <div class="card">
-    <div class="card-title">&#128657; Derivaci&oacute;n</div>
+    <div class="card-title">Derivacion</div>
     <div class="toggle-row">
       <label class="toggle">
         <input type="checkbox" id="f-derivacion" onchange="checkDerivacion()">
@@ -296,16 +294,15 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="derivacion-extra" id="derivacion-extra">
       <div style="margin-top:14px" class="field">
-        <label>Detalle / comentario de derivaci&oacute;n <span style="color:#DC2626">*</span></label>
+        <label>Detalle / comentario de derivacion <span style="color:#DC2626">*</span></label>
         <textarea id="f-der-detalle" placeholder="A donde se deriva, motivo, observaciones del traslado..."></textarea>
       </div>
     </div>
   </div>
 
-  <button class="btn-primary" onclick="guardar()">&#128190; Guardar registro</button>
+  <button class="btn-primary" onclick="guardar()">Guardar registro</button>
 </div>
 
-<!-- ── HISTORIAL ── -->
 <div class="sec" id="sec-hist">
   <div class="stats">
     <div class="stat"><div class="stat-label">Total atendidos</div><div class="stat-value" id="st-total">0</div></div>
@@ -325,16 +322,18 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         </select>
       </div>
       <div class="toolbar-actions">
-        <button class="btn-outline" onclick="reiniciarFiltros()">&#8635; Reiniciar</button>
-        <button class="btn-outline" id="btn-pdf" onclick="exportarInformePDF()">&#128196; Informe PDF</button>
-        <button class="btn-gold" onclick="exportCSV()">&#8595; CSV</button>
+        <button class="btn-outline" id="btn-sync-pac" onclick="sincronizarPacientes(true)">Sincronizar</button>
+        <button class="btn-outline" onclick="reiniciarFiltros()">Reiniciar filtros</button>
+        <button class="btn-outline" id="btn-pdf" onclick="exportarInformePDF()">Informe PDF</button>
+        <button class="btn-gold" onclick="exportCSV()">Descargar CSV</button>
       </div>
     </div>
+    <div class="sync-status" id="sync-status-pac">Mostrando registros guardados en este dispositivo. Toca "Sincronizar" para traer los de todo el equipo.</div>
     <div id="hist-list"></div>
   </div>
 </div>
 
-</div><!-- end body -->
+</div>
 
 <script>
 const SHEETS_URL='https://script.google.com/macros/s/AKfycbxWDhPeLA3LG6Pd6xq6TDoIRoVFWpYf-b0REOyhSqAGOLPTE5Eu1Ev3VOVefTgYGL4w/exec';
@@ -344,18 +343,17 @@ const EVENTO_KEY='almasalud_evento_v3';
 let registros=[];
 let eventoActual='';
 let deleteIndex=null;
+let sincronizadoConSheet=false;
 
-// ── Storage (localStorage para archivo independiente) ──
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 
-// ── Todas las funciones en window ──
 window.showTab=function(id,btn){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   document.getElementById('sec-'+id).classList.add('active');
   btn.classList.add('active');
-  if(id==='hist'){renderHist();updateStats();}
+  if(id==='hist'){ renderHist(); updateStats(); sincronizarPacientes(false); }
 };
 
 window.checkEdad=function(){
@@ -424,7 +422,7 @@ window.guardar=function(){
   if(edad>0&&edad<18)reqs.push('f-tutor','f-telefono');
   if(der)reqs.push('f-der-detalle');
   let valid=true;
-  reqs.forEach(id=>{
+  reqs.forEach(function(id){
     const el=document.getElementById(id);if(!el)return;
     if(!el.value.trim()){el.style.borderColor='#DC2626';valid=false;}
     else{el.style.borderColor='';}
@@ -450,37 +448,101 @@ window.guardar=function(){
     derivacion:der?'SI':'NO',
     derDetalle:der?document.getElementById('f-der-detalle').value.trim():'',
     tutor:document.getElementById('f-tutor').value.trim(),
-    telefono:document.getElementById('f-telefono').value.trim(),
+    telefono:document.getElementById('f-telefono').value.trim()
   };
   registros.unshift(r);
   lsSet(STORAGE_KEY,JSON.stringify(registros));
   updateStats();resetForm();showAlert('alert-ok');
-  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)}).catch(()=>{});
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)}).catch(function(){});
 };
 
 window.exportCSV=function(){
   if(!registros.length){alert('No hay registros para exportar.');return;}
   const cols=['N','Evento','Fecha','Hora','Sede','Profesional','Nombre','Edad','DNI','Equipo','Categoria','Motivo','Zona afectada','Diagnostico','Atencion realizada','Derivacion','Detalle derivacion','Tutor','Telefono','Observaciones'];
-  const rows=registros.map((r,i)=>[
-    i+1,r.evento,r.fecha,r.hora,r.cancha,r.profesional,r.nombre,r.edad,r.dni,
-    r.equipo,r.categoria,r.motivo,r.zona,r.diagnostico,r.atencion,
-    r.derivacion,r.derDetalle,r.tutor,r.telefono,r.obs
-  ].map(v=>'"'+(String(v||'')).replace(/"/g,'""')+'"'));
-  const csv=[cols.map(c=>'"'+c+'"').join(';'),...rows.map(r=>r.join(';'))].join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const rows=registros.map(function(r,i){
+    return [i+1,r.evento,r.fecha,r.hora,r.cancha,r.profesional,r.nombre,r.edad,r.dni,
+      r.equipo,r.categoria,r.motivo,r.zona,r.diagnostico,r.atencion,
+      r.derivacion,r.derDetalle,r.tutor,r.telefono,r.obs
+    ].map(function(v){ return '"'+(String(v||'')).replace(/"/g,'""')+'"'; });
+  });
+  const csv=[cols.map(function(c){ return '"'+c+'"'; }).join(';')].concat(rows.map(function(r){ return r.join(';'); })).join('\r\n');
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
   a.download='AlmaSalud_'+(eventoActual||'registro').replace(/[^a-zA-Z0-9]/g,'_').substring(0,30)+'.csv';
   document.body.appendChild(a);a.click();
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},300);
 };
 
-// ── Exportar Informe PDF (branding Alma Salud) ──
 function fmtFecha(f){
   if(!f)return '--';
   try{return new Date(f+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});}catch(e){return f;}
 }
+
+function pick(o, keys) {
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i];
+    if (o[k] !== undefined && o[k] !== null && String(o[k]).trim() !== '') return o[k];
+  }
+  return '';
+}
+function normalizarFechaISO(f) {
+  if (!f) return '';
+  f = String(f).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(f)) return f.substring(0, 10);
+  const m = f.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return m[3] + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0');
+  return f;
+}
+function mapPacienteRow(o) {
+  return {
+    id: Math.random(),
+    evento: pick(o, ['Evento','evento']),
+    fecha: normalizarFechaISO(pick(o, ['Fecha','fecha'])),
+    hora: pick(o, ['Hora','hora']),
+    cancha: pick(o, ['Sede','Cancha','sede','cancha']),
+    profesional: pick(o, ['Profesional','profesional']),
+    nombre: pick(o, ['Nombre','nombre']),
+    edad: pick(o, ['Edad','edad']),
+    dni: pick(o, ['DNI','Dni','dni']),
+    equipo: pick(o, ['Equipo','equipo']),
+    categoria: pick(o, ['Categoria','categoria']),
+    motivo: pick(o, ['Motivo','motivo']),
+    zona: pick(o, ['Zona','zona']),
+    diagnostico: pick(o, ['Diagnostico','diagnostico']),
+    atencion: pick(o, ['Atencion','atencion']),
+    obs: pick(o, ['Observaciones','observaciones','obs']),
+    derivacion: pick(o, ['Derivacion','derivacion']) || 'NO',
+    derDetalle: pick(o, ['DetalleDerivacion','derDetalle']),
+    tutor: pick(o, ['Tutor','tutor']),
+    telefono: pick(o, ['Telefono','telefono'])
+  };
+}
+
+window.sincronizarPacientes = function(forzado) {
+  const statusEl = document.getElementById('sync-status-pac');
+  const btn = document.getElementById('btn-sync-pac');
+  if (btn) btn.disabled = true;
+  statusEl.className = 'sync-status';
+  statusEl.textContent = 'Sincronizando con el Sheet...';
+  fetch(SHEETS_URL + '?tipo=get_pacientes')
+    .then(function(r){ return r.json(); })
+    .then(function(resp){
+      const lista = resp && resp.pacientes ? resp.pacientes : resp;
+      if (!Array.isArray(lista)) throw new Error('formato invalido');
+      registros = lista.map(mapPacienteRow);
+      sincronizadoConSheet = true;
+      statusEl.textContent = 'Mostrando ' + registros.length + ' registros de todo el equipo (sincronizado ahora).';
+      renderHist(); updateStats();
+    })
+    .catch(function(){
+      statusEl.className = 'sync-status warn';
+      statusEl.textContent = 'No se pudo sincronizar con el Sheet. Mostrando solo los registros guardados en este dispositivo.';
+      renderHist(); updateStats();
+    })
+    .finally(function(){ if (btn) btn.disabled = false; });
+};
 
 window.exportarInformePDF=function(){
   const lista=filtrar();
@@ -491,106 +553,109 @@ window.exportarInformePDF=function(){
   const btnTxtOrig=btn?btn.textContent:'';
   if(btn){btn.textContent='Generando...';btn.disabled=true;}
 
-  const fechas=[...new Set(lista.map(r=>r.fecha).filter(Boolean))].sort();
+  function uniq(arr){ const seen={}; const out=[]; arr.forEach(function(x){ if(x && !seen[x]){ seen[x]=true; out.push(x); } }); return out; }
+
+  const fechas=uniq(lista.map(function(r){ return r.fecha; })).sort();
   const fechaTxt=fechas.length?(fechas.length===1?fmtFecha(fechas[0]):fmtFecha(fechas[0])+' al '+fmtFecha(fechas[fechas.length-1])):'--';
-  const sedes=[...new Set(lista.map(r=>r.cancha).filter(Boolean))];
-  const profesionales=[...new Set(lista.map(r=>r.profesional).filter(Boolean))];
-  const totalDer=lista.filter(r=>r.derivacion==='SI').length;
-  const totalMen=lista.filter(r=>parseInt(r.edad||'99')<18).length;
+  const sedes=uniq(lista.map(function(r){ return r.cancha; }));
+  const profesionales=uniq(lista.map(function(r){ return r.profesional; }));
+  const totalDer=lista.filter(function(r){ return r.derivacion==='SI'; }).length;
+  const totalMen=lista.filter(function(r){ return parseInt(r.edad||'99')<18; }).length;
 
-  const cardsHTML=lista.map((r,i)=>{
+  let cardsHTML='';
+  lista.forEach(function(r,i){
     const der=r.derivacion==='SI';
-    return `
-    <div class="ip-patient">
-      <div class="ip-patient-top">
-        <div class="ip-patient-name">${i+1}. ${esc(r.nombre)}</div>
-        <div class="ip-patient-meta">${r.dni?('DNI '+esc(r.dni)):''}${r.edad?(' &middot; '+esc(r.edad)+' anos'):''}</div>
-      </div>
-      <div class="ip-grid">
-        <div><span class="ip-k">Fecha/Hora:</span> ${fmtFecha(r.fecha)} - ${esc(r.hora||'--')}</div>
-        <div><span class="ip-k">Sede:</span> ${esc(r.cancha||'--')}</div>
-        <div class="ip-full"><span class="ip-k">Motivo:</span> ${esc(r.motivo||'--')}</div>
-        ${r.diagnostico?`<div class="ip-full"><span class="ip-k">Diagnostico:</span> ${esc(r.diagnostico)}</div>`:''}
-        <div class="ip-full"><span class="ip-k">Atencion realizada:</span> ${esc(r.atencion||'--')}</div>
-        ${r.obs?`<div class="ip-full"><span class="ip-k">Observaciones:</span> ${esc(r.obs)}</div>`:''}
-        <div class="ip-full"><span class="ip-badge ${der?'der':'ok'}">${der?'Derivado':'Resuelto en el lugar'}</span></div>
-      </div>
-    </div>`;
-  }).join('');
+    cardsHTML+='<div class="ip-patient">'
+      +'<div class="ip-patient-top">'
+      +'<div class="ip-patient-name">'+(i+1)+'. '+esc(r.nombre)+'</div>'
+      +'<div class="ip-patient-meta">'+(r.dni?('DNI '+esc(r.dni)):'')+(r.edad?(' - '+esc(r.edad)+' anos'):'')+'</div>'
+      +'</div>'
+      +'<div class="ip-grid">'
+      +'<div><span class="ip-k">Fecha/Hora:</span> '+fmtFecha(r.fecha)+' - '+esc(r.hora||'--')+'</div>'
+      +'<div><span class="ip-k">Sede:</span> '+esc(r.cancha||'--')+'</div>'
+      +'<div class="ip-full"><span class="ip-k">Motivo:</span> '+esc(r.motivo||'--')+'</div>'
+      +(r.diagnostico?('<div class="ip-full"><span class="ip-k">Diagnostico:</span> '+esc(r.diagnostico)+'</div>'):'')
+      +'<div class="ip-full"><span class="ip-k">Atencion realizada:</span> '+esc(r.atencion||'--')+'</div>'
+      +(r.obs?('<div class="ip-full"><span class="ip-k">Observaciones:</span> '+esc(r.obs)+'</div>'):'')
+      +'<div class="ip-full"><span class="ip-badge '+(der?'der':'ok')+'">'+(der?'Derivado':'Resuelto en el lugar')+'</span></div>'
+      +'</div>'
+      +'</div>';
+  });
 
-  const teamHTML=profesionales.map(p=>`<div class="ip-chip">${esc(p)}</div>`).join('')||'<span style="color:#888;font-size:11px">Sin datos</span>';
+  let teamHTML='';
+  profesionales.forEach(function(p){ teamHTML+='<div class="ip-chip">'+esc(p)+'</div>'; });
+  if(!teamHTML) teamHTML='<span style="color:#888;font-size:11px">Sin datos</span>';
 
-  const html=`
-  <div id="informe-render">
-    <style>
-      #informe-render{font-family:'DM Sans',Arial,sans-serif;color:#1A1A1A;font-size:11px;background:#fff;}
-      #informe-render .ip-header{background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);padding:22px 34px;display:flex;align-items:center;justify-content:space-between;}
-      #informe-render .ip-header img{height:48px;display:block;}
-      #informe-render .ip-htitle{color:#fff;margin-left:14px;}
-      #informe-render .ip-htitle h1{font-size:18px;font-weight:700;letter-spacing:.5px;margin:0;}
-      #informe-render .ip-htitle p{font-size:9.5px;color:#F5A623;font-weight:600;letter-spacing:1px;margin:2px 0 0 0;}
-      #informe-render .ip-hleft{display:flex;align-items:center;}
-      #informe-render .ip-tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 14px;border-radius:20px;font-size:9.5px;font-weight:600;letter-spacing:.5px;white-space:nowrap;}
-      #informe-render .ip-band{height:5px;background:#F5A623;}
-      #informe-render .ip-content{padding:16px 34px 6px 34px;}
-      #informe-render .ip-info{background:#F7F9FC;border:1px solid rgba(0,61,107,.1);border-radius:10px;padding:12px 20px;margin-bottom:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 26px;}
-      #informe-render .ip-info .l{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:#00508C;font-weight:700;margin-bottom:1px;}
-      #informe-render .ip-info .v{font-size:11px;font-weight:500;}
-      #informe-render .ip-sect{font-size:12px;font-weight:700;color:#003D6B;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px 0;border-bottom:2px solid #F5A623;padding-bottom:4px;}
-      #informe-render .ip-team{display:flex;flex-wrap:wrap;gap:7px;}
-      #informe-render .ip-chip{background:#003D6B;color:#fff;font-size:9.5px;font-weight:600;padding:5px 12px;border-radius:20px;}
-      #informe-render .ip-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px;}
-      #informe-render .ip-stat{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 8px;text-align:center;}
-      #informe-render .ip-stat .n{font-size:19px;font-weight:700;color:#003D6B;}
-      #informe-render .ip-stat.a .n{color:#DC2626;}
-      #informe-render .ip-stat .l{font-size:8px;color:#5a6b7a;text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
-      #informe-render .ip-patient{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 16px;margin-bottom:8px;}
-      #informe-render .ip-patient-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
-      #informe-render .ip-patient-name{font-size:12px;font-weight:700;color:#003D6B;}
-      #informe-render .ip-patient-meta{font-size:9px;color:#5a6b7a;}
-      #informe-render .ip-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 22px;font-size:10px;}
-      #informe-render .ip-k{color:#00508C;font-weight:700;}
-      #informe-render .ip-full{grid-column:1/-1;}
-      #informe-render .ip-badge{display:inline-block;font-size:8.5px;font-weight:700;padding:3px 10px;border-radius:10px;color:#fff;}
-      #informe-render .ip-badge.ok{background:#16A34A;}
-      #informe-render .ip-badge.der{background:#DC2626;}
-      #informe-render .ip-footer{margin-top:12px;background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);color:#fff;padding:14px 34px;display:flex;justify-content:space-between;align-items:center;}
-      #informe-render .ip-footer .fw{font-size:10px;font-weight:700;}
-      #informe-render .ip-footer .fs{font-size:8.5px;color:rgba(255,255,255,.8);margin-top:2px;}
-      #informe-render .ip-footer .fc{text-align:right;font-size:9px;line-height:1.7;}
-    </style>
-    <div class="ip-header">
-      <div class="ip-hleft">
-        <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png" crossorigin="anonymous" onerror="this.style.display='none'">
-        <div class="ip-htitle"><h1>ALMA SALUD</h1><p>ASISTENCIA Y COBERTURA MEDICA PARA TUS EVENTOS</p></div>
-      </div>
-      <div class="ip-tag">INFORME DE COBERTURA MEDICA</div>
-    </div>
-    <div class="ip-band"></div>
-    <div class="ip-content">
-      <div class="ip-info">
-        <div><div class="l">Evento</div><div class="v">${esc(eventoActual||'--')}</div></div>
-        <div><div class="l">Fecha</div><div class="v">${fechaTxt}</div></div>
-        <div><div class="l">Sede(s)</div><div class="v">${esc(sedes.join(', ')||'--')}</div></div>
-        <div><div class="l">Registros incluidos</div><div class="v">${lista.length} de ${registros.length} totales</div></div>
-      </div>
-      <div class="ip-sect">Equipo profesional</div>
-      <div class="ip-team">${teamHTML}</div>
-      <div class="ip-sect">Resumen general</div>
-      <div class="ip-stats">
-        <div class="ip-stat"><div class="n">${lista.length}</div><div class="l">Pacientes atendidos</div></div>
-        <div class="ip-stat a"><div class="n">${totalDer}</div><div class="l">Derivaciones</div></div>
-        <div class="ip-stat"><div class="n">${totalMen}</div><div class="l">Menores</div></div>
-        <div class="ip-stat"><div class="n">${profesionales.length}</div><div class="l">Profesionales</div></div>
-      </div>
-      <div class="ip-sect">Detalle de atenciones</div>
-      ${cardsHTML}
-    </div>
-    <div class="ip-footer">
-      <div><div class="fw">ALMA SALUD</div><div class="fs">Asistencia y cobertura medica para tus eventos</div></div>
-      <div class="fc">almasalud.med@gmail.com &nbsp;|&nbsp; +54 9 11 2338-5830<br>@almasalud.med &nbsp;|&nbsp; www.almasalud.com.ar</div>
-    </div>
-  </div>`;
+  const styleBlock="#informe-render{font-family:'DM Sans',Arial,sans-serif;color:#1A1A1A;font-size:11px;background:#fff;}"
+    +"#informe-render .ip-header{background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);padding:22px 34px;display:flex;align-items:center;justify-content:space-between;}"
+    +"#informe-render .ip-header img{height:48px;display:block;}"
+    +"#informe-render .ip-htitle{color:#fff;margin-left:14px;}"
+    +"#informe-render .ip-htitle h1{font-size:18px;font-weight:700;letter-spacing:.5px;margin:0;}"
+    +"#informe-render .ip-htitle p{font-size:9.5px;color:#F5A623;font-weight:600;letter-spacing:1px;margin:2px 0 0 0;}"
+    +"#informe-render .ip-hleft{display:flex;align-items:center;}"
+    +"#informe-render .ip-tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 14px;border-radius:20px;font-size:9.5px;font-weight:600;letter-spacing:.5px;white-space:nowrap;}"
+    +"#informe-render .ip-band{height:5px;background:#F5A623;}"
+    +"#informe-render .ip-content{padding:16px 34px 6px 34px;}"
+    +"#informe-render .ip-info{background:#F7F9FC;border:1px solid rgba(0,61,107,.1);border-radius:10px;padding:12px 20px;margin-bottom:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 26px;}"
+    +"#informe-render .ip-info .l{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:#00508C;font-weight:700;margin-bottom:1px;}"
+    +"#informe-render .ip-info .v{font-size:11px;font-weight:500;}"
+    +"#informe-render .ip-sect{font-size:12px;font-weight:700;color:#003D6B;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px 0;border-bottom:2px solid #F5A623;padding-bottom:4px;}"
+    +"#informe-render .ip-team{display:flex;flex-wrap:wrap;gap:7px;}"
+    +"#informe-render .ip-chip{background:#003D6B;color:#fff;font-size:9.5px;font-weight:600;padding:5px 12px;border-radius:20px;}"
+    +"#informe-render .ip-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px;}"
+    +"#informe-render .ip-stat{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 8px;text-align:center;}"
+    +"#informe-render .ip-stat .n{font-size:19px;font-weight:700;color:#003D6B;}"
+    +"#informe-render .ip-stat.a .n{color:#DC2626;}"
+    +"#informe-render .ip-stat .l{font-size:8px;color:#5a6b7a;text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}"
+    +"#informe-render .ip-patient{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 16px;margin-bottom:8px;}"
+    +"#informe-render .ip-patient-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}"
+    +"#informe-render .ip-patient-name{font-size:12px;font-weight:700;color:#003D6B;}"
+    +"#informe-render .ip-patient-meta{font-size:9px;color:#5a6b7a;}"
+    +"#informe-render .ip-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 22px;font-size:10px;}"
+    +"#informe-render .ip-k{color:#00508C;font-weight:700;}"
+    +"#informe-render .ip-full{grid-column:1/-1;}"
+    +"#informe-render .ip-badge{display:inline-block;font-size:8.5px;font-weight:700;padding:3px 10px;border-radius:10px;color:#fff;}"
+    +"#informe-render .ip-badge.ok{background:#16A34A;}"
+    +"#informe-render .ip-badge.der{background:#DC2626;}"
+    +"#informe-render .ip-footer{margin-top:12px;background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);color:#fff;padding:14px 34px;display:flex;justify-content:space-between;align-items:center;}"
+    +"#informe-render .ip-footer .fw{font-size:10px;font-weight:700;}"
+    +"#informe-render .ip-footer .fs{font-size:8.5px;color:rgba(255,255,255,.8);margin-top:2px;}"
+    +"#informe-render .ip-footer .fc{text-align:right;font-size:9px;line-height:1.7;}";
+
+  const html='<div id="informe-render">'
+    +'<style>'+styleBlock+'</style>'
+    +'<div class="ip-header">'
+    +'<div class="ip-hleft">'
+    +"<img src=\"https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png\" crossorigin=\"anonymous\" onerror=\"this.style.display='none'\">"
+    +'<div class="ip-htitle"><h1>ALMA SALUD</h1><p>ASISTENCIA Y COBERTURA MEDICA PARA TUS EVENTOS</p></div>'
+    +'</div>'
+    +'<div class="ip-tag">INFORME DE COBERTURA MEDICA</div>'
+    +'</div>'
+    +'<div class="ip-band"></div>'
+    +'<div class="ip-content">'
+    +'<div class="ip-info">'
+    +'<div><div class="l">Evento</div><div class="v">'+esc(eventoActual||'--')+'</div></div>'
+    +'<div><div class="l">Fecha</div><div class="v">'+fechaTxt+'</div></div>'
+    +'<div><div class="l">Sede(s)</div><div class="v">'+esc(sedes.join(', ')||'--')+'</div></div>'
+    +'<div><div class="l">Registros incluidos</div><div class="v">'+lista.length+' de '+registros.length+' totales</div></div>'
+    +'</div>'
+    +'<div class="ip-sect">Equipo profesional</div>'
+    +'<div class="ip-team">'+teamHTML+'</div>'
+    +'<div class="ip-sect">Resumen general</div>'
+    +'<div class="ip-stats">'
+    +'<div class="ip-stat"><div class="n">'+lista.length+'</div><div class="l">Pacientes atendidos</div></div>'
+    +'<div class="ip-stat a"><div class="n">'+totalDer+'</div><div class="l">Derivaciones</div></div>'
+    +'<div class="ip-stat"><div class="n">'+totalMen+'</div><div class="l">Menores</div></div>'
+    +'<div class="ip-stat"><div class="n">'+profesionales.length+'</div><div class="l">Profesionales</div></div>'
+    +'</div>'
+    +'<div class="ip-sect">Detalle de atenciones</div>'
+    +cardsHTML
+    +'</div>'
+    +'<div class="ip-footer">'
+    +'<div><div class="fw">ALMA SALUD</div><div class="fs">Asistencia y cobertura medica para tus eventos</div></div>'
+    +'<div class="fc">almasalud.med@gmail.com | +54 9 11 2338-5830<br>@almasalud.med | www.almasalud.com.ar</div>'
+    +'</div>'
+    +'</div>';
 
   const wrap=document.createElement('div');
   wrap.style.position='absolute';wrap.style.top='0';wrap.style.left='0';wrap.style.width='0';wrap.style.height='0';wrap.style.overflow='hidden';
@@ -600,7 +665,7 @@ window.exportarInformePDF=function(){
   wrap.appendChild(container);
   document.body.appendChild(wrap);
 
-  const restore=()=>{if(btn){btn.textContent=btnTxtOrig;btn.disabled=false;}if(wrap.parentNode)document.body.removeChild(wrap);};
+  const restore=function(){if(btn){btn.textContent=btnTxtOrig;btn.disabled=false;}if(wrap.parentNode)document.body.removeChild(wrap);};
 
   const opt={
     margin:0,
@@ -611,15 +676,14 @@ window.exportarInformePDF=function(){
     pagebreak:{mode:['css','avoid-all'],avoid:'.ip-patient'}
   };
 
-  html2pdf().set(opt).from(container).save().then(restore).catch((e)=>{console.error(e);alert('Ocurrio un error generando el PDF.');restore();});
+  html2pdf().set(opt).from(container).save().then(restore).catch(function(e){console.error(e);alert('Ocurrio un error generando el PDF.');restore();});
 };
 
-// ── Init ──
 function init(){
   try{const r=lsGet(STORAGE_KEY);registros=r?JSON.parse(r):[];}catch(e){registros=[];}
   eventoActual=lsGet(EVENTO_KEY)||'';
 
-  setInterval(()=>{
+  setInterval(function(){
     const n=new Date();
     const el=document.getElementById('f-hora');
     if(el)el.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
@@ -643,7 +707,7 @@ init();
 function resetForm(){
   ['f-nombre','f-edad','f-dni','f-equipo','f-categoria','f-motivo','f-zona','f-diagnostico',
    'f-atencion','f-obs','f-der-detalle','f-tutor','f-telefono','f-cancha','f-profesional']
-  .forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.style.borderColor='';}});
+  .forEach(function(id){const el=document.getElementById(id);if(el){el.value='';el.style.borderColor='';}});
   document.getElementById('f-derivacion').checked=false;
   document.getElementById('derivacion-extra').classList.remove('show');
   document.getElementById('der-label').textContent='Sin derivacion';
@@ -652,16 +716,16 @@ function resetForm(){
 }
 
 function showAlert(id){
-  document.querySelectorAll('.alert').forEach(a=>a.classList.remove('show'));
+  document.querySelectorAll('.alert').forEach(function(a){ a.classList.remove('show'); });
   const el=document.getElementById(id);
-  if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
+  if(el){el.classList.add('show');setTimeout(function(){el.classList.remove('show');},4000);}
 }
 
 function filtrar(){
   const nom=(document.getElementById('filter-nombre').value||'').toLowerCase();
   const can=document.getElementById('filter-cancha').value;
   const der=document.getElementById('filter-der').value;
-  return registros.filter(r=>{
+  return registros.filter(function(r){
     if(nom&&!r.nombre.toLowerCase().includes(nom))return false;
     if(can&&r.cancha!==can)return false;
     if(der==='si'&&r.derivacion!=='SI')return false;
@@ -671,64 +735,67 @@ function filtrar(){
 }
 
 function renderHist(){
-  const canchas=[...new Set(registros.map(r=>r.cancha).filter(Boolean))];
+  const canchas=[];
+  registros.forEach(function(r){ if(r.cancha && canchas.indexOf(r.cancha)===-1) canchas.push(r.cancha); });
   const sel=document.getElementById('filter-cancha');
   const prev=sel.value;
   sel.innerHTML='<option value="">Todas las sedes</option>';
-  canchas.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  canchas.forEach(function(c){const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
   if(prev)sel.value=prev;
   const lista=filtrar();
   const cont=document.getElementById('hist-list');
   if(!lista.length){cont.innerHTML='<div class="empty">No hay registros que coincidan.</div>';return;}
-  cont.innerHTML=lista.map(r=>{
+  cont.innerHTML=lista.map(function(r){
     const idx=registros.indexOf(r);
     const menor=parseInt(r.edad||'99')<18;
     const fecha=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}):'--';
-    return `<div class="record">
-      <div class="rec-top">
-        <div>
-          <div class="rec-name">${esc(r.nombre)}</div>
-          <div class="rec-meta">${fecha} &mdash; ${r.hora||'--'} | ${esc(r.cancha)}</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="btn-expand" onclick="toggleFull(${idx})">Ver detalle</button>
-          <button class="btn-danger-sm" onclick="confirmarEliminar(${idx})">&#10005;</button>
-        </div>
-      </div>
-      <div class="badges">
-        ${r.equipo?`<span class="badge b-evento">${esc(r.equipo)}</span>`:''}
-        ${r.categoria?`<span class="badge b-cat">${esc(r.categoria)}</span>`:''}
-        ${r.cancha?`<span class="badge b-cancha">${esc(r.cancha)}</span>`:''}
-        ${r.derivacion==='SI'?'<span class="badge b-der">DERIVADO</span>':''}
-        ${menor?'<span class="badge" style="background:#FFF8E7;color:#7a4f00;border:1px solid #F5A623">Menor</span>':''}
-      </div>
-      <div class="rec-detail">
-        <b>Motivo:</b> ${esc(r.motivo||'--')} &nbsp;&middot;&nbsp; <b>Atencion:</b> ${esc(r.atencion||'--')}<br>
-        <span style="font-size:12px;padding:3px 10px;border-radius:12px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);display:inline-block;margin-top:6px">${esc(r.profesional||'--')}</span>
-      </div>
-      <div class="rec-full" id="full-${idx}">
-        ${dr('Evento',r.evento)}
-        ${dr('Fecha / Hora',fecha+' - '+(r.hora||''))}
-        ${dr('Profesional',r.profesional)}
-        ${dr('Edad',r.edad?r.edad+' anos':'')}
-        ${dr('DNI / RUT',r.dni)}
-        ${dr('Zona afectada',r.zona)}
-        ${dr('Diagnostico',r.diagnostico)}
-        ${r.obs?dr('Observaciones',r.obs):''}
-        ${r.derivacion==='SI'?`<div class="rec-full-row" style="color:var(--red)"><strong>Derivacion</strong>${esc(r.derDetalle)}</div>`:''}
-        ${r.tutor?dr('Tutor / Padre',r.tutor+(r.telefono?' - '+r.telefono:'')):''}
-      </div>
-    </div>`;
+    return '<div class="record">'
+      +'<div class="rec-top">'
+      +'<div>'
+      +'<div class="rec-name">'+esc(r.nombre)+'</div>'
+      +'<div class="rec-meta">'+fecha+' - '+(r.hora||'--')+' | '+esc(r.cancha)+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:8px;align-items:center">'
+      +'<button class="btn-expand" onclick="toggleFull('+idx+')">Ver detalle</button>'
+      +'<button class="btn-danger-sm" onclick="confirmarEliminar('+idx+')">Eliminar</button>'
+      +'</div>'
+      +'</div>'
+      +'<div class="badges">'
+      +(r.equipo?('<span class="badge b-evento">'+esc(r.equipo)+'</span>'):'')
+      +(r.categoria?('<span class="badge b-cat">'+esc(r.categoria)+'</span>'):'')
+      +(r.cancha?('<span class="badge b-cancha">'+esc(r.cancha)+'</span>'):'')
+      +(r.derivacion==='SI'?'<span class="badge b-der">DERIVADO</span>':'')
+      +(menor?'<span class="badge" style="background:#FFF8E7;color:#7a4f00;border:1px solid #F5A623">Menor</span>':'')
+      +'</div>'
+      +'<div class="rec-detail">'
+      +'<b>Motivo:</b> '+esc(r.motivo||'--')+' - <b>Atencion:</b> '+esc(r.atencion||'--')+'<br>'
+      +'<span style="font-size:12px;padding:3px 10px;border-radius:12px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);display:inline-block;margin-top:6px">'+esc(r.profesional||'--')+'</span>'
+      +'</div>'
+      +'<div class="rec-full" id="full-'+idx+'">'
+      +dr('Evento',r.evento)
+      +dr('Fecha / Hora',fecha+' - '+(r.hora||''))
+      +dr('Profesional',r.profesional)
+      +dr('Edad',r.edad?r.edad+' anos':'')
+      +dr('DNI / RUT',r.dni)
+      +dr('Zona afectada',r.zona)
+      +dr('Diagnostico',r.diagnostico)
+      +(r.obs?dr('Observaciones',r.obs):'')
+      +(r.derivacion==='SI'?'<div class="rec-full-row" style="color:var(--red)"><strong>Derivacion</strong>'+esc(r.derDetalle)+'</div>':'')
+      +(r.tutor?dr('Tutor / Padre',r.tutor+(r.telefono?' - '+r.telefono:'')):'')
+      +'</div>'
+      +'</div>';
   }).join('');
 }
 
-function dr(l,v){return v?`<div class="rec-full-row"><strong>${l}</strong>${esc(String(v))}</div>`:'';}
+function dr(l,v){return v?('<div class="rec-full-row"><strong>'+l+'</strong>'+esc(String(v))+'</div>'):'';}
 
 function updateStats(){
   document.getElementById('st-total').textContent=registros.length;
-  document.getElementById('st-der').textContent=registros.filter(r=>r.derivacion==='SI').length;
-  document.getElementById('st-men').textContent=registros.filter(r=>parseInt(r.edad||'99')<18).length;
-  document.getElementById('st-prof').textContent=[...new Set(registros.map(r=>r.profesional).filter(Boolean))].length;
+  document.getElementById('st-der').textContent=registros.filter(function(r){ return r.derivacion==='SI'; }).length;
+  document.getElementById('st-men').textContent=registros.filter(function(r){ return parseInt(r.edad||'99')<18; }).length;
+  const profs=[];
+  registros.forEach(function(r){ if(r.profesional && profs.indexOf(r.profesional)===-1) profs.push(r.profesional); });
+  document.getElementById('st-prof').textContent=profs.length;
 }
 
 function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'--';}
