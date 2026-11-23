@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alma Salud - Panel de Informes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--navy2:#00508C;--gold:#F5A623;--gold2:#E09612;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FCA5A5;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --bg:#F4F7FB;--card:#fff;--border:#DDE3EF;--muted:#6B7494;--text:#1A1A1A;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.hdr{background:var(--navy);display:flex;align-items:center;gap:20px;padding:18px 28px;border-bottom:3px solid var(--gold)}
+.hdr img{height:72px;width:auto;object-fit:contain}
+.hdr-sep{width:1.5px;height:52px;background:rgba(255,255,255,0.2);flex-shrink:0}
+.hdr-info{flex:1}
+.hdr-title{font-size:22px;font-weight:700;color:#fff;letter-spacing:.5px}
+.hdr-sub{font-size:13px;color:var(--gold);font-weight:500;margin-top:3px}
+.body{padding:24px 28px;max-width:1100px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:18px}
+label{display:block;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+input,select{width:100%;font-size:16px;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;background:#fff;color:var(--text);font-family:var(--font)}
+input:focus,select:focus{outline:none;border-color:var(--navy2)}
+.btn-gold{padding:11px 18px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-gold:active{background:var(--gold2)}
+.btn-gold:disabled{background:#ccc;color:#888;cursor:not-allowed}
+.btn-outline{padding:11px 18px;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-outline:active{background:var(--bg)}
+.btn-outline:disabled{color:#aaa;border-color:#ddd;cursor:not-allowed}
+.btn-danger-sm{padding:9px 14px;background:#fff;color:var(--red);border:1.5px solid var(--red-border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--border);border-top:3px solid var(--navy);border-radius:12px;padding:16px}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.stat-value{font-size:26px;font-weight:700;color:var(--navy)}
+.stat.red{border-top-color:var(--red)}.stat.red .stat-value{color:var(--red)}
+.stat.gold{border-top-color:var(--gold)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters select,.filters input[type=text]{width:auto;font-size:14px;padding:9px 13px;border-radius:8px;min-width:140px}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.sync-status{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.sync-status.warn{color:#D97706}
+.record{border-bottom:1px solid var(--border);padding:18px 0}
+.record:last-child{border-bottom:none}
+.rec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.rec-name{font-size:17px;font-weight:700;color:var(--navy)}
+.rec-meta{font-size:12px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.badge{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:600}
+.b-cat{background:#E8EDF8;color:#003D6B}
+.b-cancha{background:#F0F0F0;color:#444}
+.b-evento{background:#FFF4E0;color:#7a4f00}
+.b-der{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.rec-detail{font-size:14px;color:var(--muted);line-height:1.7}
+.btn-expand{padding:7px 14px;background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.rec-full{display:none;margin-top:12px;background:var(--bg);border-radius:10px;padding:16px;font-size:13px;line-height:1.9}
+.rec-full.show{display:block}
+.rec-full-row{display:flex;gap:8px;padding:3px 0;flex-wrap:wrap}
+.rec-full-row strong{color:var(--navy);min-width:140px;flex-shrink:0}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:15px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:32px 28px;max-width:400px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal h3{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.modal p{font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.modal .field{margin-bottom:18px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+@media(max-width:640px){
+  .body{padding:16px}
+  .stats{grid-template-columns:1fr 1fr}
+  .hdr{flex-wrap:wrap;padding:14px 16px;gap:12px}
+  .hdr img{height:54px}
+  .hdr-sep{height:40px}
+  .hdr-title{font-size:19px}
+  .hdr-sub{font-size:12px}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .filters{flex-direction:column}
+  .filters select,.filters input[type=text]{width:100%}
+  .toolbar-actions{justify-content:flex-end}
+  .modal{padding:24px 18px}
+  .card{padding:18px 16px}
+  .rec-top{flex-direction:column;gap:10px}
+  .rec-top>div:last-child{display:flex;gap:8px}
+  .btn-expand,.btn-danger-sm{flex:1;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="overlay show" id="modal-password">
+  <div class="modal" style="text-align:center">
+    <h3>Acceso restringido</h3>
+    <p>Este panel muestra datos de pacientes de todo el equipo. Ingresá la clave para continuar.</p>
+    <div class="field">
+      <input type="password" id="input-clave" placeholder="Clave" autocomplete="off" onkeydown="if(event.key==='Enter')window.verificarClave()">
+    </div>
+    <div id="clave-err" style="display:none;color:#DC2626;font-size:13px;margin-top:-10px;margin-bottom:14px">Clave incorrecta.</div>
+    <div class="modal-btns" style="justify-content:center">
+      <button class="btn-gold" onclick="verificarClave()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="confirm-overlay">
+  <div class="modal" style="max-width:340px;text-align:center">
+    <h3>Eliminar registro</h3>
+    <p>Seguro que queres eliminar este registro de esta vista? Esta accion no se puede deshacer y no afecta al Sheet (para eso editalo ahi directamente).</p>
+    <div class="modal-btns" style="justify-content:center;margin-top:8px">
+      <button class="btn-outline" onclick="cerrarConfirm()">Cancelar</button>
+      <button class="btn-danger-sm" onclick="ejecutarEliminar()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="hdr">
+  <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png"
+    alt="Alma Salud"
+    onerror="this.onerror=null;this.src='https://fabrilucen5.github.io/imagenesalmasalud/Alma%20Salud%20-%20Logo%202.png'">
+  <div class="hdr-sep"></div>
+  <div class="hdr-info">
+    <div class="hdr-title">ALMA SALUD</div>
+    <div class="hdr-sub">Panel de informes - uso privado</div>
+  </div>
+</div>
+
+<div class="body">
+
+<div class="stats">
+  <div class="stat"><div class="stat-label">Total atendidos</div><div class="stat-value" id="st-total">0</div></div>
+  <div class="stat red"><div class="stat-label">Derivaciones</div><div class="stat-value" id="st-der">0</div></div>
+  <div class="stat gold"><div class="stat-label">Menores</div><div class="stat-value" id="st-men">0</div></div>
+  <div class="stat"><div class="stat-label">Profesionales</div><div class="stat-value" id="st-prof">0</div></div>
+</div>
+<div class="card">
+  <div class="toolbar">
+    <div class="filters">
+      <input type="text" id="filter-nombre" placeholder="Buscar paciente..." oninput="renderHist()">
+      <select id="filter-evento" onchange="renderHist()"><option value="">Todos los eventos</option></select>
+      <select id="filter-cancha" onchange="renderHist()"><option value="">Todas las sedes</option></select>
+      <select id="filter-der" onchange="renderHist()">
+        <option value="">Todas</option>
+        <option value="si">Con derivacion</option>
+        <option value="no">Sin derivacion</option>
+      </select>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn-outline" id="btn-sync-pac" onclick="sincronizarPacientes(true)">Sincronizar</button>
+      <button class="btn-outline" onclick="reiniciarFiltros()">Reiniciar filtros</button>
+      <button class="btn-outline" id="btn-pdf" onclick="exportarInformePDF()">Informe PDF</button>
+      <button class="btn-gold" onclick="exportCSV()">Descargar CSV</button>
+    </div>
+  </div>
+  <div class="sync-status" id="sync-status-pac">Ingresá la clave para sincronizar.</div>
+  <div id="hist-list"></div>
+</div>
+
+</div>
+
+<script>
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbxWDhPeLA3LG6Pd6xq6TDoIRoVFWpYf-b0REOyhSqAGOLPTE5Eu1Ev3VOVefTgYGL4w/exec';
+
+// CAMBIA ESTA CLAVE por la que quieras usar vos.
+const CLAVE_ADMIN='AlmaSalud2026';
+
+let registros=[];
+let deleteIndex=null;
+
+window.verificarClave=function(){
+  const val=document.getElementById('input-clave').value;
+  if(val===CLAVE_ADMIN){
+    document.getElementById('clave-err').style.display='none';
+    document.getElementById('modal-password').classList.remove('show');
+    try{ sessionStorage.setItem('as_panel_unlocked','1'); }catch(e){}
+    sincronizarPacientes(false);
+  }else{
+    document.getElementById('clave-err').style.display='block';
+  }
+};
+
+(function(){
+  try{
+    if(sessionStorage.getItem('as_panel_unlocked')==='1'){
+      document.getElementById('modal-password').classList.remove('show');
+    }
+  }catch(e){}
+})();
+
+window.cerrarConfirm=function(){
+  document.getElementById('confirm-overlay').classList.remove('show');
+};
+
+window.ejecutarEliminar=function(){
+  if(deleteIndex!==null){
+    registros.splice(deleteIndex,1);
+    renderHist();updateStats();
+    document.getElementById('confirm-overlay').classList.remove('show');
+    deleteIndex=null;
+  }
+};
+
+window.toggleFull=function(i){
+  const e=document.getElementById('full-'+i);if(e)e.classList.toggle('show');
+};
+
+window.confirmarEliminar=function(i){
+  deleteIndex=i;
+  document.getElementById('confirm-overlay').classList.add('show');
+};
+
+window.reiniciarFiltros=function(){
+  document.getElementById('filter-nombre').value='';
+  document.getElementById('filter-evento').value='';
+  document.getElementById('filter-cancha').value='';
+  document.getElementById('filter-der').value='';
+  renderHist();
+};
+
+window.exportCSV=function(){
+  if(!registros.length){alert('No hay registros para exportar.');return;}
+  const cols=['N','Evento','Fecha','Hora','Sede','Profesional','Nombre','Edad','DNI','Equipo','Categoria','Motivo','Zona afectada','Diagnostico','Atencion realizada','Derivacion','Detalle derivacion','Tutor','Telefono','Observaciones'];
+  const rows=registros.map(function(r,i){
+    return [i+1,r.evento,r.fecha,r.hora,r.cancha,r.profesional,r.nombre,r.edad,r.dni,
+      r.equipo,r.categoria,r.motivo,r.zona,r.diagnostico,r.atencion,
+      r.derivacion,r.derDetalle,r.tutor,r.telefono,r.obs
+    ].map(function(v){ return '"'+(String(v||'')).replace(/"/g,'""')+'"'; });
+  });
+  const csv=[cols.map(function(c){ return '"'+c+'"'; }).join(';')].concat(rows.map(function(r){ return r.join(';'); })).join('\r\n');
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='AlmaSalud_Pacientes_'+new Date().toISOString().split('T')[0]+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+};
+
+function fmtFecha(f){
+  if(!f)return '--';
+  try{return new Date(f+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});}catch(e){return f;}
+}
+
+function jsonp(url, cb, timeoutMs) {
+  const cbName = '__jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+  let done = false;
+  const script = document.createElement('script');
+  const timer = setTimeout(function(){
+    if (done) return; done = true;
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(new Error('jsonp_timeout'));
+  }, timeoutMs || 15000);
+  window[cbName] = function(data){
+    if (done) return; done = true;
+    clearTimeout(timer);
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(null, data);
+  };
+  script.onerror = function(){
+    if (done) return; done = true;
+    clearTimeout(timer);
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(new Error('jsonp_load_error'));
+  };
+  script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName;
+  document.body.appendChild(script);
+}
+
+function pick(o, keys) {
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i];
+    if (o[k] !== undefined && o[k] !== null && String(o[k]).trim() !== '') return o[k];
+  }
+  return '';
+}
+function normalizarFechaISO(f) {
+  if (!f) return '';
+  f = String(f).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(f)) return f.substring(0, 10);
+  const m = f.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return m[3] + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0');
+  return f;
+}
+function mapPacienteRow(o) {
+  return {
+    id: Math.random(),
+    evento: pick(o, ['Evento','evento']),
+    fecha: normalizarFechaISO(pick(o, ['Fecha','fecha'])),
+    hora: pick(o, ['Hora','hora']),
+    cancha: pick(o, ['Sede','Cancha','sede','cancha']),
+    profesional: pick(o, ['Profesional','profesional']),
+    nombre: pick(o, ['Nombre','nombre']),
+    edad: pick(o, ['Edad','edad']),
+    dni: pick(o, ['DNI','Dni','dni']),
+    equipo: pick(o, ['Equipo','equipo']),
+    categoria: pick(o, ['Categoria','categoria','Categoría']),
+    motivo: pick(o, ['Motivo','motivo']),
+    zona: pick(o, ['Zona','zona','Zona afectada']),
+    diagnostico: pick(o, ['Diagnostico','diagnostico','Diagnóstico']),
+    atencion: pick(o, ['Atencion','atencion','Atención realizada','Atencion realizada']),
+    obs: pick(o, ['Observaciones','observaciones','obs']),
+    derivacion: pick(o, ['Derivacion','derivacion','Derivación']) || 'NO',
+    derDetalle: pick(o, ['DetalleDerivacion','derDetalle','Detalle derivación','Detalle derivacion']),
+    tutor: pick(o, ['Tutor','tutor']),
+    telefono: pick(o, ['Telefono','telefono','Teléfono'])
+  };
+}
+
+window.sincronizarPacientes = function(forzado) {
+  const statusEl = document.getElementById('sync-status-pac');
+  const btn = document.getElementById('btn-sync-pac');
+  if (btn) btn.disabled = true;
+  statusEl.className = 'sync-status';
+  statusEl.textContent = 'Sincronizando con el Sheet...';
+  jsonp(SHEETS_URL + '?tipo=get_pacientes', function(err, resp){
+    if (btn) btn.disabled = false;
+    const lista = resp && resp.pacientes ? resp.pacientes : resp;
+    if (err || !Array.isArray(lista)) {
+      statusEl.className = 'sync-status warn';
+      statusEl.textContent = 'No se pudo sincronizar con el Sheet. Revisa tu conexion e intenta de nuevo.';
+      renderHist(); updateStats();
+      return;
+    }
+    registros = lista.map(mapPacienteRow);
+    statusEl.textContent = 'Mostrando ' + registros.length + ' registros de todo el equipo (sincronizado ahora).';
+    renderHist(); updateStats();
+  });
+};
+
+window.exportarInformePDF=function(){
+  const lista=filtrar();
+  if(!lista.length){alert('No hay registros para exportar.');return;}
+  if(typeof html2pdf==='undefined'){alert('No se pudo cargar el generador de PDF. Verifica tu conexion a internet e intenta de nuevo.');return;}
+
+  const btn=document.getElementById('btn-pdf');
+  const btnTxtOrig=btn?btn.textContent:'';
+  if(btn){btn.textContent='Generando...';btn.disabled=true;}
+
+  function uniq(arr){ const seen={}; const out=[]; arr.forEach(function(x){ if(x && !seen[x]){ seen[x]=true; out.push(x); } }); return out; }
+
+  const eventos=uniq(lista.map(function(r){ return r.evento; }));
+  const fechas=uniq(lista.map(function(r){ return r.fecha; })).sort();
+  const fechaTxt=fechas.length?(fechas.length===1?fmtFecha(fechas[0]):fmtFecha(fechas[0])+' al '+fmtFecha(fechas[fechas.length-1])):'--';
+  const sedes=uniq(lista.map(function(r){ return r.cancha; }));
+  const profesionales=uniq(lista.map(function(r){ return r.profesional; }));
+  const totalDer=lista.filter(function(r){ return r.derivacion==='SI'; }).length;
+  const totalMen=lista.filter(function(r){ return parseInt(r.edad||'99')<18; }).length;
+
+  let cardsHTML='';
+  lista.forEach(function(r,i){
+    const der=r.derivacion==='SI';
+    cardsHTML+='<div class="ip-patient">'
+      +'<div class="ip-patient-top">'
+      +'<div class="ip-patient-name">'+(i+1)+'. '+esc(r.nombre)+'</div>'
+      +'<div class="ip-patient-meta">'+(r.dni?('DNI '+esc(r.dni)):'')+(r.edad?(' - '+esc(r.edad)+' anos'):'')+'</div>'
+      +'</div>'
+      +'<div class="ip-grid">'
+      +'<div><span class="ip-k">Fecha/Hora:</span> '+fmtFecha(r.fecha)+' - '+esc(r.hora||'--')+'</div>'
+      +'<div><span class="ip-k">Sede:</span> '+esc(r.cancha||'--')+'</div>'
+      +'<div class="ip-full"><span class="ip-k">Motivo:</span> '+esc(r.motivo||'--')+'</div>'
+      +(r.diagnostico?('<div class="ip-full"><span class="ip-k">Diagnostico:</span> '+esc(r.diagnostico)+'</div>'):'')
+      +'<div class="ip-full"><span class="ip-k">Atencion realizada:</span> '+esc(r.atencion||'--')+'</div>'
+      +(r.obs?('<div class="ip-full"><span class="ip-k">Observaciones:</span> '+esc(r.obs)+'</div>'):'')
+      +'<div class="ip-full"><span class="ip-badge '+(der?'der':'ok')+'">'+(der?'Derivado':'Resuelto en el lugar')+'</span></div>'
+      +'</div>'
+      +'</div>';
+  });
+
+  let teamHTML='';
+  profesionales.forEach(function(p){ teamHTML+='<div class="ip-chip">'+esc(p)+'</div>'; });
+  if(!teamHTML) teamHTML='<span style="color:#888;font-size:11px">Sin datos</span>';
+
+  const styleBlock="#informe-render{font-family:'DM Sans',Arial,sans-serif;color:#1A1A1A;font-size:11px;background:#fff;}"
+    +"#informe-render .ip-header{background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);padding:22px 34px;display:flex;align-items:center;justify-content:space-between;}"
+    +"#informe-render .ip-header img{height:48px;display:block;}"
+    +"#informe-render .ip-htitle{color:#fff;margin-left:14px;}"
+    +"#informe-render .ip-htitle h1{font-size:18px;font-weight:700;letter-spacing:.5px;margin:0;}"
+    +"#informe-render .ip-htitle p{font-size:9.5px;color:#F5A623;font-weight:600;letter-spacing:1px;margin:2px 0 0 0;}"
+    +"#informe-render .ip-hleft{display:flex;align-items:center;}"
+    +"#informe-render .ip-tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 14px;border-radius:20px;font-size:9.5px;font-weight:600;letter-spacing:.5px;white-space:nowrap;}"
+    +"#informe-render .ip-band{height:5px;background:#F5A623;}"
+    +"#informe-render .ip-content{padding:16px 34px 6px 34px;}"
+    +"#informe-render .ip-info{background:#F7F9FC;border:1px solid rgba(0,61,107,.1);border-radius:10px;padding:12px 20px;margin-bottom:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 26px;}"
+    +"#informe-render .ip-info .l{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:#00508C;font-weight:700;margin-bottom:1px;}"
+    +"#informe-render .ip-info .v{font-size:11px;font-weight:500;}"
+    +"#informe-render .ip-sect{font-size:12px;font-weight:700;color:#003D6B;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px 0;border-bottom:2px solid #F5A623;padding-bottom:4px;}"
+    +"#informe-render .ip-team{display:flex;flex-wrap:wrap;gap:7px;}"
+    +"#informe-render .ip-chip{background:#003D6B;color:#fff;font-size:9.5px;font-weight:600;padding:5px 12px;border-radius:20px;}"
+    +"#informe-render .ip-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px;}"
+    +"#informe-render .ip-stat{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 8px;text-align:center;}"
+    +"#informe-render .ip-stat .n{font-size:19px;font-weight:700;color:#003D6B;}"
+    +"#informe-render .ip-stat.a .n{color:#DC2626;}"
+    +"#informe-render .ip-stat .l{font-size:8px;color:#5a6b7a;text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}"
+    +"#informe-render .ip-patient{border:1px solid rgba(0,61,107,.15);border-radius:10px;padding:9px 16px;margin-bottom:8px;}"
+    +"#informe-render .ip-patient-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}"
+    +"#informe-render .ip-patient-name{font-size:12px;font-weight:700;color:#003D6B;}"
+    +"#informe-render .ip-patient-meta{font-size:9px;color:#5a6b7a;}"
+    +"#informe-render .ip-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 22px;font-size:10px;}"
+    +"#informe-render .ip-k{color:#00508C;font-weight:700;}"
+    +"#informe-render .ip-full{grid-column:1/-1;}"
+    +"#informe-render .ip-badge{display:inline-block;font-size:8.5px;font-weight:700;padding:3px 10px;border-radius:10px;color:#fff;}"
+    +"#informe-render .ip-badge.ok{background:#16A34A;}"
+    +"#informe-render .ip-badge.der{background:#DC2626;}"
+    +"#informe-render .ip-footer{margin-top:12px;background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);color:#fff;padding:14px 34px;display:flex;justify-content:space-between;align-items:center;}"
+    +"#informe-render .ip-footer .fw{font-size:10px;font-weight:700;}"
+    +"#informe-render .ip-footer .fs{font-size:8.5px;color:rgba(255,255,255,.8);margin-top:2px;}"
+    +"#informe-render .ip-footer .fc{text-align:right;font-size:9px;line-height:1.7;}";
+
+  const html='<div id="informe-render">'
+    +'<style>'+styleBlock+'</style>'
+    +'<div class="ip-header">'
+    +'<div class="ip-hleft">'
+    +"<img src=\"https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png\" crossorigin=\"anonymous\" onerror=\"this.style.display='none'\">"
+    +'<div class="ip-htitle"><h1>ALMA SALUD</h1><p>ASISTENCIA Y COBERTURA MEDICA PARA TUS EVENTOS</p></div>'
+    +'</div>'
+    +'<div class="ip-tag">INFORME DE COBERTURA MEDICA</div>'
+    +'</div>'
+    +'<div class="ip-band"></div>'
+    +'<div class="ip-content">'
+    +'<div class="ip-info">'
+    +'<div><div class="l">Evento(s)</div><div class="v">'+esc(eventos.join(', ')||'--')+'</div></div>'
+    +'<div><div class="l">Fecha</div><div class="v">'+fechaTxt+'</div></div>'
+    +'<div><div class="l">Sede(s)</div><div class="v">'+esc(sedes.join(', ')||'--')+'</div></div>'
+    +'<div><div class="l">Registros incluidos</div><div class="v">'+lista.length+' de '+registros.length+' totales</div></div>'
+    +'</div>'
+    +'<div class="ip-sect">Equipo profesional</div>'
+    +'<div class="ip-team">'+teamHTML+'</div>'
+    +'<div class="ip-sect">Resumen general</div>'
+    +'<div class="ip-stats">'
+    +'<div class="ip-stat"><div class="n">'+lista.length+'</div><div class="l">Pacientes atendidos</div></div>'
+    +'<div class="ip-stat a"><div class="n">'+totalDer+'</div><div class="l">Derivaciones</div></div>'
+    +'<div class="ip-stat"><div class="n">'+totalMen+'</div><div class="l">Menores</div></div>'
+    +'<div class="ip-stat"><div class="n">'+profesionales.length+'</div><div class="l">Profesionales</div></div>'
+    +'</div>'
+    +'<div class="ip-sect">Detalle de atenciones</div>'
+    +cardsHTML
+    +'</div>'
+    +'<div class="ip-footer">'
+    +'<div><div class="fw">ALMA SALUD</div><div class="fs">Asistencia y cobertura medica para tus eventos</div></div>'
+    +'<div class="fc">almasalud.med@gmail.com | +54 9 11 2338-5830<br>@almasalud.med | www.almasalud.com.ar</div>'
+    +'</div>'
+    +'</div>';
+
+  const wrap=document.createElement('div');
+  wrap.style.position='absolute';wrap.style.top='0';wrap.style.left='0';wrap.style.width='0';wrap.style.height='0';wrap.style.overflow='hidden';
+  const container=document.createElement('div');
+  container.style.width='794px';
+  container.innerHTML=html;
+  wrap.appendChild(container);
+  document.body.appendChild(wrap);
+
+  const restore=function(){if(btn){btn.textContent=btnTxtOrig;btn.disabled=false;}if(wrap.parentNode)document.body.removeChild(wrap);};
+
+  const opt={
+    margin:0,
+    filename:'AlmaSalud_InformePacientes_'+new Date().toISOString().split('T')[0]+'.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},
+    jsPDF:{unit:'pt',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','avoid-all'],avoid:'.ip-patient'}
+  };
+
+  html2pdf().set(opt).from(container).save().then(restore).catch(function(e){console.error(e);alert('Ocurrio un error generando el PDF.');restore();});
+};
+
+function filtrar(){
+  const nom=(document.getElementById('filter-nombre').value||'').toLowerCase();
+  const evt=document.getElementById('filter-evento').value;
+  const can=document.getElementById('filter-cancha').value;
+  const der=document.getElementById('filter-der').value;
+  return registros.filter(function(r){
+    if(nom&&!r.nombre.toLowerCase().includes(nom))return false;
+    if(evt&&r.evento!==evt)return false;
+    if(can&&r.cancha!==can)return false;
+    if(der==='si'&&r.derivacion!=='SI')return false;
+    if(der==='no'&&r.derivacion!=='NO')return false;
+    return true;
+  });
+}
+
+function renderHist(){
+  const eventos=[];
+  registros.forEach(function(r){ if(r.evento && eventos.indexOf(r.evento)===-1) eventos.push(r.evento); });
+  const selEvt=document.getElementById('filter-evento');
+  const prevEvt=selEvt.value;
+  selEvt.innerHTML='<option value="">Todos los eventos</option>';
+  eventos.forEach(function(ev){const o=document.createElement('option');o.value=ev;o.textContent=ev;selEvt.appendChild(o);});
+  if(prevEvt)selEvt.value=prevEvt;
+  const canchas=[];
+  registros.forEach(function(r){ if(r.cancha && canchas.indexOf(r.cancha)===-1) canchas.push(r.cancha); });
+  const sel=document.getElementById('filter-cancha');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Todas las sedes</option>';
+  canchas.forEach(function(c){const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  if(prev)sel.value=prev;
+  const lista=filtrar();
+  const cont=document.getElementById('hist-list');
+  if(!lista.length){cont.innerHTML='<div class="empty">No hay registros que coincidan.</div>';return;}
+  cont.innerHTML=lista.map(function(r){
+    const idx=registros.indexOf(r);
+    const menor=parseInt(r.edad||'99')<18;
+    const fecha=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}):'--';
+    return '<div class="record">'
+      +'<div class="rec-top">'
+      +'<div>'
+      +'<div class="rec-name">'+esc(r.nombre)+'</div>'
+      +'<div class="rec-meta">'+fecha+' - '+(r.hora||'--')+' | '+esc(r.cancha)+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:8px;align-items:center">'
+      +'<button class="btn-expand" onclick="toggleFull('+idx+')">Ver detalle</button>'
+      +'<button class="btn-danger-sm" onclick="confirmarEliminar('+idx+')">Quitar de esta vista</button>'
+      +'</div>'
+      +'</div>'
+      +'<div class="badges">'
+      +(r.equipo?('<span class="badge b-evento">'+esc(r.equipo)+'</span>'):'')
+      +(r.categoria?('<span class="badge b-cat">'+esc(r.categoria)+'</span>'):'')
+      +(r.cancha?('<span class="badge b-cancha">'+esc(r.cancha)+'</span>'):'')
+      +(r.derivacion==='SI'?'<span class="badge b-der">DERIVADO</span>':'')
+      +(menor?'<span class="badge" style="background:#FFF8E7;color:#7a4f00;border:1px solid #F5A623">Menor</span>':'')
+      +'</div>'
+      +'<div class="rec-detail">'
+      +'<b>Motivo:</b> '+esc(r.motivo||'--')+' - <b>Atencion:</b> '+esc(r.atencion||'--')+'<br>'
+      +'<span style="font-size:12px;padding:3px 10px;border-radius:12px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);display:inline-block;margin-top:6px">'+esc(r.profesional||'--')+'</span>'
+      +'</div>'
+      +'<div class="rec-full" id="full-'+idx+'">'
+      +dr('Evento',r.evento)
+      +dr('Fecha / Hora',fecha+' - '+(r.hora||''))
+      +dr('Profesional',r.profesional)
+      +dr('Edad',r.edad?r.edad+' anos':'')
+      +dr('DNI / RUT',r.dni)
+      +dr('Zona afectada',r.zona)
+      +dr('Diagnostico',r.diagnostico)
+      +(r.obs?dr('Observaciones',r.obs):'')
+      +(r.derivacion==='SI'?'<div class="rec-full-row" style="color:var(--red)"><strong>Derivacion</strong>'+esc(r.derDetalle)+'</div>':'')
+      +(r.tutor?dr('Tutor / Padre',r.tutor+(r.telefono?' - '+r.telefono:'')):'')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function dr(l,v){return v?('<div class="rec-full-row"><strong>'+l+'</strong>'+esc(String(v))+'</div>'):'';}
+
+function updateStats(){
+  document.getElementById('st-total').textContent=registros.length;
+  document.getElementById('st-der').textContent=registros.filter(function(r){ return r.derivacion==='SI'; }).length;
+  document.getElementById('st-men').textContent=registros.filter(function(r){ return parseInt(r.edad||'99')<18; }).length;
+  const profs=[];
+  registros.forEach(function(r){ if(r.profesional && profs.indexOf(r.profesional)===-1) profs.push(r.profesional); });
+  document.getElementById('st-prof').textContent=profs.length;
+}
+
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'--';}
+</script>
+</body>
+</html>
