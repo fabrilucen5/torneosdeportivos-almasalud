@@ -405,45 +405,66 @@ function datosActuales() {
   return sheetFichajes !== null ? sheetFichajes : getData();
 }
 
+function jsonp(url, cb, timeoutMs) {
+  const cbName = '__jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+  let done = false;
+  const script = document.createElement('script');
+  const timer = setTimeout(function(){
+    if (done) return; done = true;
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(new Error('jsonp_timeout'));
+  }, timeoutMs || 15000);
+  window[cbName] = function(data){
+    if (done) return; done = true;
+    clearTimeout(timer);
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(null, data);
+  };
+  script.onerror = function(){
+    if (done) return; done = true;
+    clearTimeout(timer);
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(new Error('jsonp_load_error'));
+  };
+  script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName;
+  document.body.appendChild(script);
+}
+
 window.sincronizarSheet = function(forzado) {
   const statusEl = document.getElementById('sync-status');
   const btn = document.getElementById('btn-sync');
   if (btn) btn.disabled = true;
   statusEl.className = 'sync-status';
   statusEl.textContent = 'Sincronizando con el Sheet...';
-  fetch(SHEETS_URL + '?tipo=get_fichajes')
-    .then(function(r){ return r.json(); })
-    .then(function(resp){
-      const lista = resp && resp.fichajes ? resp.fichajes : resp;
-      if (!Array.isArray(lista)) throw new Error('formato invalido');
-      sheetFichajes = lista.map(mapFichajeRow);
-      statusEl.textContent = 'Mostrando ' + sheetFichajes.length + ' fichajes de todo el torneo (sincronizado ahora).';
-      stats(); renderReg();
-    })
-    .catch(function(){
+  jsonp(SHEETS_URL + '?tipo=get_fichajes', function(err, resp){
+    if (btn) btn.disabled = false;
+    const lista = resp && resp.fichajes ? resp.fichajes : resp;
+    if (err || !Array.isArray(lista)) {
       statusEl.className = 'sync-status warn';
       statusEl.textContent = 'No se pudo sincronizar con el Sheet. Mostrando solo los fichajes guardados en este dispositivo.';
       stats(); renderReg();
-    })
-    .finally(function(){ if (btn) btn.disabled = false; });
+      return;
+    }
+    sheetFichajes = lista.map(mapFichajeRow);
+    statusEl.textContent = 'Mostrando ' + sheetFichajes.length + ' fichajes de todo el torneo (sincronizado ahora).';
+    stats(); renderReg();
+  });
 };
 
 function cargarTorneos(forzar) {
   const refreshBtn = document.getElementById('btn-refresh-torneos');
   if (refreshBtn) refreshBtn.classList.add('spin');
-  fetch(SHEETS_URL + '?tipo=get_torneos')
-    .then(function(r){ return r.json(); })
-    .then(function(resp){
-      const lista = resp && resp.torneos ? resp.torneos : resp;
-      if (!Array.isArray(lista)) throw new Error('formato invalido');
-      localStorage.setItem(TORNEOS_CACHE_KEY, JSON.stringify(lista));
-      renderTorneos(lista);
-    })
-    .catch(function(){
+  jsonp(SHEETS_URL + '?tipo=get_torneos', function(err, resp){
+    if (refreshBtn) refreshBtn.classList.remove('spin');
+    const lista = resp && resp.torneos ? resp.torneos : resp;
+    if (err || !Array.isArray(lista)) {
       if (forzar) alert('No se pudo actualizar la lista de torneos. Revisa tu conexion a internet.');
       renderTorneos(getTorneosCache());
-    })
-    .finally(function(){ if (refreshBtn) refreshBtn.classList.remove('spin'); });
+      return;
+    }
+    localStorage.setItem(TORNEOS_CACHE_KEY, JSON.stringify(lista));
+    renderTorneos(lista);
+  });
 }
 function getTorneosCache() {
   try { return JSON.parse(localStorage.getItem(TORNEOS_CACHE_KEY) || '[]'); } catch(e) { return []; }

@@ -411,22 +411,44 @@ function renderTorneosModal(lista){
   window.toggleOtroEventoModal();
 }
 function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+function jsonp(url, cb, timeoutMs) {
+  const cbName = '__jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+  let done = false;
+  const script = document.createElement('script');
+  const timer = setTimeout(function(){
+    if (done) return; done = true;
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(new Error('jsonp_timeout'));
+  }, timeoutMs || 15000);
+  window[cbName] = function(data){
+    if (done) return; done = true;
+    clearTimeout(timer);
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(null, data);
+  };
+  script.onerror = function(){
+    if (done) return; done = true;
+    clearTimeout(timer);
+    delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script);
+    cb(new Error('jsonp_load_error'));
+  };
+  script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName;
+  document.body.appendChild(script);
+}
 function cargarTorneosModal(forzar){
   const btn=document.getElementById('btn-refresh-torneos-modal');
   if(btn){btn.disabled=true;btn.textContent='...';}
-  fetch(FICHAJE_SHEETS_URL+'?tipo=get_torneos')
-    .then(function(r){ return r.json(); })
-    .then(function(resp){
-      const lista=resp&&resp.torneos?resp.torneos:resp;
-      if(!Array.isArray(lista)) throw new Error('formato invalido');
-      lsSet(TORNEOS_CACHE_KEY,JSON.stringify(lista));
-      renderTorneosModal(lista);
-    })
-    .catch(function(){
+  jsonp(FICHAJE_SHEETS_URL+'?tipo=get_torneos', function(err, resp){
+    if(btn){btn.disabled=false;btn.textContent='Actualizar';}
+    const lista=resp&&resp.torneos?resp.torneos:resp;
+    if(err || !Array.isArray(lista)){
       if(forzar) alert('No se pudo actualizar la lista de torneos. Revisa tu conexion a internet.');
       renderTorneosModal(getTorneosCache());
-    })
-    .finally(function(){ if(btn){btn.disabled=false;btn.textContent='Actualizar';} });
+      return;
+    }
+    lsSet(TORNEOS_CACHE_KEY,JSON.stringify(lista));
+    renderTorneosModal(lista);
+  });
 }
 
 window.confirmarEvento=function(){
@@ -591,22 +613,20 @@ window.sincronizarPacientes = function(forzado) {
   if (btn) btn.disabled = true;
   statusEl.className = 'sync-status';
   statusEl.textContent = 'Sincronizando con el Sheet...';
-  fetch(SHEETS_URL + '?tipo=get_pacientes')
-    .then(function(r){ return r.json(); })
-    .then(function(resp){
-      const lista = resp && resp.pacientes ? resp.pacientes : resp;
-      if (!Array.isArray(lista)) throw new Error('formato invalido');
-      registros = lista.map(mapPacienteRow);
-      sincronizadoConSheet = true;
-      statusEl.textContent = 'Mostrando ' + registros.length + ' registros de todo el equipo (sincronizado ahora).';
-      renderHist(); updateStats();
-    })
-    .catch(function(){
+  jsonp(SHEETS_URL + '?tipo=get_pacientes', function(err, resp){
+    if (btn) btn.disabled = false;
+    const lista = resp && resp.pacientes ? resp.pacientes : resp;
+    if (err || !Array.isArray(lista)) {
       statusEl.className = 'sync-status warn';
       statusEl.textContent = 'No se pudo sincronizar con el Sheet. Mostrando solo los registros guardados en este dispositivo.';
       renderHist(); updateStats();
-    })
-    .finally(function(){ if (btn) btn.disabled = false; });
+      return;
+    }
+    registros = lista.map(mapPacienteRow);
+    sincronizadoConSheet = true;
+    statusEl.textContent = 'Mostrando ' + registros.length + ' registros de todo el equipo (sincronizado ahora).';
+    renderHist(); updateStats();
+  });
 };
 
 window.exportarInformePDF=function(){
