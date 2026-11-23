@@ -82,6 +82,13 @@ textarea{resize:vertical;min-height:80px}
 .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
 .sync-status{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5}
 .sync-status.warn{color:#D97706}
+.label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.label-row label{margin-bottom:0}
+.btn-refresh{background:none;border:none;color:var(--navy2);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;padding:0}
+.btn-refresh:active{color:var(--navy)}
+.otro-evento{display:none;margin-top:10px}
+.otro-evento.show{display:block}
+.evento-note{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
 .record{border-bottom:1px solid var(--border);padding:18px 0}
 .record:last-child{border-bottom:none}
 .rec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
@@ -136,12 +143,21 @@ textarea{resize:vertical;min-height:80px}
 <div class="overlay show" id="modal-evento">
   <div class="modal">
     <h3>Configuracion de sesion</h3>
-    <p>Antes de comenzar, ingresa el nombre del evento o torneo de hoy. Se asociara a todos los registros.</p>
+    <p>Antes de comenzar, seleccioná el evento o torneo de hoy. Se asociará a todos los registros.</p>
     <div class="field">
-      <label>Nombre del evento / torneo <span style="color:#DC2626">*</span></label>
-      <input type="text" id="input-evento-modal" placeholder="Ej: Torneo Nacional Juveniles A 2026" autocomplete="off" autocorrect="off">
+      <div class="label-row">
+        <label>Evento / torneo <span style="color:#DC2626">*</span></label>
+        <button type="button" class="btn-refresh" id="btn-refresh-torneos-modal" onclick="actualizarTorneosModal()" title="Actualizar lista">Actualizar</button>
+      </div>
+      <select id="input-evento-modal" onchange="toggleOtroEventoModal()">
+        <option value="">Cargando torneos...</option>
+      </select>
+      <div class="otro-evento" id="otro-evento-modal-wrap">
+        <input type="text" id="input-evento-otro" placeholder="Nombre exacto del torneo/evento" autocomplete="off" autocorrect="off" style="margin-top:8px">
+        <div class="evento-note">No está en la lista. Avisale al administrador para que lo agregue al Sheet de Fichajes.</div>
+      </div>
     </div>
-    <div id="modal-evento-err" style="display:none;color:#DC2626;font-size:13px;margin-top:-12px;margin-bottom:12px">Ingresa el nombre del evento.</div>
+    <div id="modal-evento-err" style="display:none;color:#DC2626;font-size:13px;margin-top:-12px;margin-bottom:12px">Seleccioná el evento.</div>
     <div class="modal-btns">
       <button class="btn-gold" onclick="confirmarEvento()">Confirmar</button>
     </div>
@@ -314,6 +330,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="toolbar">
       <div class="filters">
         <input type="text" id="filter-nombre" placeholder="Buscar paciente..." oninput="renderHist()">
+        <select id="filter-evento" onchange="renderHist()"><option value="">Todos los eventos</option></select>
         <select id="filter-cancha" onchange="renderHist()"><option value="">Todas las sedes</option></select>
         <select id="filter-der" onchange="renderHist()">
           <option value="">Todas</option>
@@ -339,6 +356,8 @@ textarea{resize:vertical;min-height:80px}
 const SHEETS_URL='https://script.google.com/macros/s/AKfycbxWDhPeLA3LG6Pd6xq6TDoIRoVFWpYf-b0REOyhSqAGOLPTE5Eu1Ev3VOVefTgYGL4w/exec';
 const STORAGE_KEY='almasalud_pacientes_v3';
 const EVENTO_KEY='almasalud_evento_v3';
+const FICHAJE_SHEETS_URL='https://script.google.com/macros/s/AKfycbwkEradQlz1xKHi92tNMTopf9cpe07KJFzWaZoM3_htIK1abuo0J8ssPoaKzDDbHRF6/exec';
+const TORNEOS_CACHE_KEY='as_torneos_cache_v1';
 
 let registros=[];
 let eventoActual='';
@@ -367,8 +386,52 @@ window.checkDerivacion=function(){
   document.getElementById('der-label').textContent=c?'CON DERIVACION':'Sin derivacion';
 };
 
+window.toggleOtroEventoModal=function(){
+  const sel=document.getElementById('input-evento-modal');
+  document.getElementById('otro-evento-modal-wrap').classList.toggle('show', sel.value==='__otro__');
+};
+
+window.actualizarTorneosModal=function(){ cargarTorneosModal(true); };
+
+function getTorneosCache(){
+  try{ return JSON.parse(localStorage.getItem(TORNEOS_CACHE_KEY)||'[]'); }catch(e){ return []; }
+}
+function renderTorneosModal(lista){
+  const sel=document.getElementById('input-evento-modal');
+  const prev=sel.value||eventoActual;
+  let html='<option value="">Seleccionar torneo/evento...</option>';
+  lista.forEach(function(t){ html+='<option value="'+escAttr(t)+'">'+esc(t)+'</option>'; });
+  html+='<option value="__otro__">Otro (no esta en la lista)</option>';
+  sel.innerHTML=html;
+  const opts=sel.options;
+  let found=false;
+  for(let i=0;i<opts.length;i++){ if(opts[i].value===prev) found=true; }
+  if(prev&&found){ sel.value=prev; }
+  else if(prev){ sel.value='__otro__'; document.getElementById('input-evento-otro').value=prev; }
+  window.toggleOtroEventoModal();
+}
+function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+function cargarTorneosModal(forzar){
+  const btn=document.getElementById('btn-refresh-torneos-modal');
+  if(btn){btn.disabled=true;btn.textContent='...';}
+  fetch(FICHAJE_SHEETS_URL+'?tipo=get_torneos')
+    .then(function(r){ return r.json(); })
+    .then(function(resp){
+      const lista=resp&&resp.torneos?resp.torneos:resp;
+      if(!Array.isArray(lista)) throw new Error('formato invalido');
+      lsSet(TORNEOS_CACHE_KEY,JSON.stringify(lista));
+      renderTorneosModal(lista);
+    })
+    .catch(function(){
+      if(forzar) alert('No se pudo actualizar la lista de torneos. Revisa tu conexion a internet.');
+      renderTorneosModal(getTorneosCache());
+    })
+    .finally(function(){ if(btn){btn.disabled=false;btn.textContent='Actualizar';} });
+}
+
 window.confirmarEvento=function(){
-  const val=document.getElementById('input-evento-modal').value.trim();
+  const sel=document.getElementById('input-evento-modal').value;
+  const val=sel==='__otro__'?document.getElementById('input-evento-otro').value.trim():sel;
   if(!val){document.getElementById('modal-evento-err').style.display='block';return;}
   document.getElementById('modal-evento-err').style.display='none';
   eventoActual=val;
@@ -379,7 +442,8 @@ window.confirmarEvento=function(){
 };
 
 window.abrirModalEvento=function(){
-  document.getElementById('input-evento-modal').value=eventoActual;
+  renderTorneosModal(getTorneosCache());
+  cargarTorneosModal(false);
   document.getElementById('modal-evento-err').style.display='none';
   document.getElementById('modal-evento').classList.add('show');
 };
@@ -409,6 +473,7 @@ window.confirmarEliminar=function(i){
 
 window.reiniciarFiltros=function(){
   document.getElementById('filter-nombre').value='';
+  document.getElementById('filter-evento').value='';
   document.getElementById('filter-cancha').value='';
   document.getElementById('filter-der').value='';
   renderHist();
@@ -696,7 +761,10 @@ function init(){
     document.getElementById('f-evento').value=eventoActual;
   }
 
-  document.getElementById('input-evento-modal').addEventListener('keydown',function(e){
+  renderTorneosModal(getTorneosCache());
+  cargarTorneosModal(false);
+
+  document.getElementById('input-evento-otro').addEventListener('keydown',function(e){
     if(e.key==='Enter')window.confirmarEvento();
   });
 
@@ -723,10 +791,12 @@ function showAlert(id){
 
 function filtrar(){
   const nom=(document.getElementById('filter-nombre').value||'').toLowerCase();
+  const evt=document.getElementById('filter-evento').value;
   const can=document.getElementById('filter-cancha').value;
   const der=document.getElementById('filter-der').value;
   return registros.filter(function(r){
     if(nom&&!r.nombre.toLowerCase().includes(nom))return false;
+    if(evt&&r.evento!==evt)return false;
     if(can&&r.cancha!==can)return false;
     if(der==='si'&&r.derivacion!=='SI')return false;
     if(der==='no'&&r.derivacion!=='NO')return false;
@@ -735,6 +805,13 @@ function filtrar(){
 }
 
 function renderHist(){
+  const eventos=[];
+  registros.forEach(function(r){ if(r.evento && eventos.indexOf(r.evento)===-1) eventos.push(r.evento); });
+  const selEvt=document.getElementById('filter-evento');
+  const prevEvt=selEvt.value;
+  selEvt.innerHTML='<option value="">Todos los eventos</option>';
+  eventos.forEach(function(ev){const o=document.createElement('option');o.value=ev;o.textContent=ev;selEvt.appendChild(o);});
+  if(prevEvt)selEvt.value=prevEvt;
   const canchas=[];
   registros.forEach(function(r){ if(r.cancha && canchas.indexOf(r.cancha)===-1) canchas.push(r.cancha); });
   const sel=document.getElementById('filter-cancha');
