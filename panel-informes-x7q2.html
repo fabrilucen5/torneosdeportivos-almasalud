@@ -285,13 +285,30 @@ function normalizarFechaISO(f) {
   if (m) return m[3] + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0');
   return f;
 }
+// Alias de sedes: unifica variantes de escritura que son el mismo lugar.
+// Para agregar una nueva variante, sumale una linea con la clave en minuscula.
+const SEDE_ALIASES = {
+  'unc': 'UNCuyo', 'uncuyo': 'UNCuyo',
+  'poliguay': 'Polideportivo Poliguay', 'polideportivo poliguay': 'Polideportivo Poliguay',
+  'ribosqui': 'Polideportivo Ribosqui, Maipú', 'polideportivo ribosqui': 'Polideportivo Ribosqui, Maipú',
+  'maipu': 'Polideportivo Ribosqui, Maipú', 'maipú': 'Polideportivo Ribosqui, Maipú', 'polideportivo maipu': 'Polideportivo Ribosqui, Maipú',
+  'san martin': 'Polideportivo Torito, San Martín', 'san martin, torito': 'Polideportivo Torito, San Martín', 'san martin , torito': 'Polideportivo Torito, San Martín',
+  'torito rodriguez': 'Polideportivo Torito, San Martín', 'torito rodriguez sm': 'Polideportivo Torito, San Martín',
+  'gimnasio 1': 'Gimnasio N°1', 'gimnasio número 1': 'Gimnasio N°1', 'gimnasio numero 1': 'Gimnasio N°1',
+  'lujan': 'Luján', 'luján': 'Luján', 'lujan, cancha 3': 'Luján', 'cancha 3': 'Luján'
+};
+function normalizarSede(s){
+  if(!s) return s;
+  const key=String(s).trim().toLowerCase();
+  return SEDE_ALIASES[key] || String(s).trim();
+}
 function mapPacienteRow(o) {
   return {
     id: Math.random(),
     evento: pick(o, ['Evento','evento']),
     fecha: normalizarFechaISO(pick(o, ['Fecha','fecha'])),
     hora: pick(o, ['Hora','hora']),
-    cancha: pick(o, ['Sede','Cancha','sede','cancha']),
+    cancha: normalizarSede(pick(o, ['Sede','Cancha','sede','cancha'])),
     profesional: pick(o, ['Profesional','profesional']),
     nombre: pick(o, ['Nombre','nombre']),
     edad: pick(o, ['Edad','edad']),
@@ -422,7 +439,6 @@ window.exportarInformePDF=function(){
     +'<div><div class="l">Evento(s)</div><div class="v">'+esc(eventos.join(', ')||'--')+'</div></div>'
     +'<div><div class="l">Fecha</div><div class="v">'+fechaTxt+'</div></div>'
     +'<div><div class="l">Sede(s)</div><div class="v">'+esc(sedes.join(', ')||'--')+'</div></div>'
-    +'<div><div class="l">Registros incluidos</div><div class="v">'+lista.length+' de '+registros.length+' totales</div></div>'
     +'</div>'
     +'<div class="ip-sect">Resumen general</div>'
     +'<div class="ip-stats">'
