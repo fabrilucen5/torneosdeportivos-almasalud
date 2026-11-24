@@ -353,10 +353,11 @@ window.exportarInformePDF=function(){
   let cardsHTML='';
   lista.forEach(function(r,i){
     const der=r.derivacion==='SI';
+    const menor=parseInt(r.edad||'99')<18;
     cardsHTML+='<div class="ip-patient">'
       +'<div class="ip-patient-top">'
-      +'<div class="ip-patient-name">'+(i+1)+'. '+esc(r.nombre)+'</div>'
-      +'<div class="ip-patient-meta">'+(r.dni?('DNI '+esc(r.dni)):'')+(r.edad?(' - '+esc(r.edad)+' anos'):'')+'</div>'
+      +'<div class="ip-patient-name">Caso '+(i+1)+'</div>'
+      +'<div class="ip-patient-meta">'+(r.edad?(esc(r.edad)+' anos'+(menor?' (menor)':'')):'')+'</div>'
       +'</div>'
       +'<div class="ip-grid">'
       +'<div><span class="ip-k">Fecha/Hora:</span> '+fmtFecha(r.fecha)+' - '+esc(r.hora||'--')+'</div>'
@@ -369,10 +370,6 @@ window.exportarInformePDF=function(){
       +'</div>'
       +'</div>';
   });
-
-  let teamHTML='';
-  profesionales.forEach(function(p){ teamHTML+='<div class="ip-chip">'+esc(p)+'</div>'; });
-  if(!teamHTML) teamHTML='<span style="color:#888;font-size:11px">Sin datos</span>';
 
   const styleBlock="#informe-render{font-family:'DM Sans',Arial,sans-serif;color:#1A1A1A;font-size:11px;background:#fff;}"
     +"#informe-render .ip-header{background:linear-gradient(135deg,#003D6B 0%,#00508C 100%);padding:22px 34px;display:flex;align-items:center;justify-content:space-between;}"
@@ -427,8 +424,6 @@ window.exportarInformePDF=function(){
     +'<div><div class="l">Sede(s)</div><div class="v">'+esc(sedes.join(', ')||'--')+'</div></div>'
     +'<div><div class="l">Registros incluidos</div><div class="v">'+lista.length+' de '+registros.length+' totales</div></div>'
     +'</div>'
-    +'<div class="ip-sect">Equipo profesional</div>'
-    +'<div class="ip-team">'+teamHTML+'</div>'
     +'<div class="ip-sect">Resumen general</div>'
     +'<div class="ip-stats">'
     +'<div class="ip-stat"><div class="n">'+lista.length+'</div><div class="l">Pacientes atendidos</div></div>'
