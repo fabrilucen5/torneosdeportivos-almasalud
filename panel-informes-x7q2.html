@@ -198,7 +198,7 @@ window.cerrarConfirm=function(){
 window.ejecutarEliminar=function(){
   if(deleteIndex!==null){
     registros.splice(deleteIndex,1);
-    renderHist();updateStats();
+    renderHist();
     document.getElementById('confirm-overlay').classList.remove('show');
     deleteIndex=null;
   }
@@ -322,12 +322,12 @@ window.sincronizarPacientes = function(forzado) {
     if (err || !Array.isArray(lista)) {
       statusEl.className = 'sync-status warn';
       statusEl.textContent = 'No se pudo sincronizar con el Sheet. Revisa tu conexion e intenta de nuevo.';
-      renderHist(); updateStats();
+      renderHist();
       return;
     }
     registros = lista.map(mapPacienteRow);
     statusEl.textContent = 'Mostrando ' + registros.length + ' registros de todo el equipo (sincronizado ahora).';
-    renderHist(); updateStats();
+    renderHist();
   });
 };
 
@@ -498,6 +498,7 @@ function renderHist(){
   canchas.forEach(function(c){const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
   if(prev)sel.value=prev;
   const lista=filtrar();
+  updateStats(lista);
   const cont=document.getElementById('hist-list');
   if(!lista.length){cont.innerHTML='<div class="empty">No hay registros que coincidan.</div>';return;}
   cont.innerHTML=lista.map(function(r){
@@ -544,12 +545,13 @@ function renderHist(){
 
 function dr(l,v){return v?('<div class="rec-full-row"><strong>'+l+'</strong>'+esc(String(v))+'</div>'):'';}
 
-function updateStats(){
-  document.getElementById('st-total').textContent=registros.length;
-  document.getElementById('st-der').textContent=registros.filter(function(r){ return r.derivacion==='SI'; }).length;
-  document.getElementById('st-men').textContent=registros.filter(function(r){ return parseInt(r.edad||'99')<18; }).length;
+function updateStats(lista){
+  const base=lista||registros;
+  document.getElementById('st-total').textContent=base.length;
+  document.getElementById('st-der').textContent=base.filter(function(r){ return r.derivacion==='SI'; }).length;
+  document.getElementById('st-men').textContent=base.filter(function(r){ return parseInt(r.edad||'99')<18; }).length;
   const profs=[];
-  registros.forEach(function(r){ if(r.profesional && profs.indexOf(r.profesional)===-1) profs.push(r.profesional); });
+  base.forEach(function(r){ if(r.profesional && profs.indexOf(r.profesional)===-1) profs.push(r.profesional); });
   document.getElementById('st-prof').textContent=profs.length;
 }
 
